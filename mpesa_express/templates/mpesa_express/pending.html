@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Pending</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .success {
+            font-size: 24px;
+            color: green;
+            font-weight: bold;
+        }
+        .tick {
+            font-size: 50px;
+            color: green;
+        }
+        .message {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="tick">✔</div>
+    <div class="success">STK Push Sent</div>
+    <div class="message">
+        We have sent an STK push to your phone number <strong>{{ phone_number }}</strong>.<br>
+        Please enter your PIN to complete the facilitation fee payment.
+    </div>
+    <a href="/" class="btn">OK</a>
+</body>
+</html>

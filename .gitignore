@@ -1,0 +1,19 @@
+# Ignore Python-related files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Ignore environment files
+.env
+*.env
+venv/
+env/
+
+# Ignore static files collected
+/staticfiles/
+
+# Ignore VS Code settings
+.vscode/
+.vercel
