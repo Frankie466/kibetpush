@@ -3,623 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Starlink Payment Portal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Payment</title>
     <style>
-        :root {
-            --primary-color: #28a745;
-            --primary-dark: #218838;
-            --accent-color: #33710dd1;
-            --dark-bg: #121212;
-            --card-bg: #1e1e1e;
-            --text-light: #f8f9fa;
-            --text-muted: #adb5bd;
-            --gradient-primary: linear-gradient(135deg, #28a745, #20c997);
-            --gradient-accent: linear-gradient(135deg, #33710dd1, #28a745);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--dark-bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(40, 167, 69, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(51, 113, 13, 0.05) 0%, transparent 20%);
-            color: var(--text-light);
-            min-height: 100vh;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(40, 167, 69, 0.03) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(51, 113, 13, 0.03) 0%, transparent 40%);
-            z-index: -1;
-        }
-
-        /* Header Animation */
-        .header {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 1s ease;
+            padding: 50px;
         }
-
-        .header h1 {
-            font-size: 2.8rem;
-            background: var(--gradient-accent);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            font-weight: 700;
+        h2 {
+            color: #33710dd1;
         }
-
-        .header p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Main Container */
         .container {
-            background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            max-width: 500px;
-            width: 100%;
-            animation: slideUp 0.8s ease;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient-primary);
-        }
-
-        .container h2 {
-            color: var(--text-light);
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        /* Payment Plan Cards */
-        .payment-plan {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .payment-plan:hover {
-            transform: translateY(-5px);
-            background: rgba(40, 167, 69, 0.1);
-            border-color: rgba(40, 167, 69, 0.3);
-            box-shadow: var(--shadow-md);
-        }
-
-        .payment-plan.active {
-            background: rgba(40, 167, 69, 0.15);
-            border-color: var(--primary-color);
-        }
-
-        .plan-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .plan-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        .plan-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .plan-details {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .plan-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            opacity: 0;
-            color: var(--primary-color);
-            transition: opacity 0.3s ease;
-        }
-
-        .payment-plan:hover .plan-icon {
-            opacity: 1;
-        }
-
-        /* Payment Button */
-        .pay-button {
-            width: 100%;
-            padding: 18px;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .pay-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-        }
-
-        .pay-button:active {
-            transform: translateY(0);
-        }
-
-        .pay-button i {
-            font-size: 1.2rem;
-        }
-
-        /* Read More Section */
-        .read-more-container {
-            margin-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 20px;
-        }
-
-        .read-more-toggle {
-            color: var(--primary-color);
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .read-more-toggle i {
-            transition: transform 0.3s ease;
-        }
-
-        .read-more-toggle.active i {
-            transform: rotate(180deg);
-        }
-
-        .description {
-            max-height: 0;
-            overflow: hidden;
-            color: var(--text-muted);
-            line-height: 1.6;
-            transition: max-height 0.5s ease;
-        }
-
-        .description.active {
-            max-height: 300px;
-        }
-
-        /* Payment Status Modal */
-        .payment-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-        }
-
-        .payment-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            transform: scale(0.9);
-            transition: transform 0.4s ease;
-        }
-
-        .payment-modal.active .modal-content {
-            transform: scale(1);
-        }
-
-        .success-icon {
-            font-size: 4rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            animation: bounceIn 0.8s ease;
-        }
-
-        .status-title {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: var(--text-light);
-        }
-
-        .status-message {
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .phone-highlight {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .modal-button {
-            padding: 14px 30px;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
+            background: white;
+            padding: 30px;
             border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #28a745;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.3s;
         }
-
-        .modal-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        .button:hover {
+            background: #218838;
         }
-
-        /* Footer */
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            animation: fadeIn 1s ease 0.5s both;
-        }
-
-        .footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer a:hover {
+        .read-more {
+            color: blue;
+            cursor: pointer;
             text-decoration: underline;
         }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .description {
+            display: none;
+            text-align: left;
+            margin-top: 10px;
         }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        #payment-status {
+            display: none;
+            text-align: left;
+            margin-top: 20px;
         }
-
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                transform: scale(1);
-            }
+        #success-tick {
+            color: green;
+            font-size: 24px;
+            display: inline-block;
         }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
-            }
+        #status-message {
+            font-weight: bold;
+            margin-top: 10px;
         }
-
-        .pulse {
-            animation: pulse 2s infinite;
+        #instruction-message {
+            margin-top: 10px;
         }
-
-        /* Responsive Design */
-        @media (max-width: 576px) {
-            .container {
-                padding: 25px;
-            }
-            
-            .header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .plan-title {
-                font-size: 1.1rem;
-            }
-            
-            .plan-price {
-                font-size: 1.3rem;
-            }
+        #ok-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        #ok-button:hover {
+            background-color: #0056b3;
         }
     </style>
-</head>
-<body>
-    <div class="header">
-        <h1><i class="fas fa-satellite"></i> Starlink Payment Portal</h1>
-        <p>Select your preferred plan and enjoy high-speed satellite internet across Kenya</p>
-    </div>
-
-    <div class="container">
-        <h2>Select Payment Plan</h2>
-        
-        <div class="payment-plan" data-amount="85" data-plan="7 Days - 10GB">
-            <div class="plan-header">
-                <div class="plan-title">7 Days - 10GB</div>
-                <div class="plan-price">Ksh 85</div>
-            </div>
-            <div class="plan-details">
-                <span>Perfect for short-term needs</span>
-                <span>High-speed browsing</span>
-            </div>
-            <div class="plan-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-        </div>
-        
-        <div class="payment-plan" data-amount="155" data-plan="21 Days - 30GB">
-            <div class="plan-header">
-                <div class="plan-title">21 Days - 30GB</div>
-                <div class="plan-price">Ksh 155</div>
-            </div>
-            <div class="plan-details">
-                <span>Great for remote work</span>
-                <span>Streaming & downloads</span>
-            </div>
-            <div class="plan-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-        </div>
-        
-        <div class="payment-plan" data-amount="225" data-plan="31 Days - Unlimited">
-            <div class="plan-header">
-                <div class="plan-title">31 Days - Unlimited</div>
-                <div class="plan-price">Ksh 225</div>
-            </div>
-            <div class="plan-details">
-                <span>Best value for money</span>
-                <span>Unlimited high-speed data</span>
-            </div>
-            <div class="plan-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-        </div>
-        
-        <button class="pay-button pulse" id="payButton">
-            <i class="fas fa-money-check-alt"></i>
-            <span>Pay with M-Pesa</span>
-        </button>
-        
-        <div class="read-more-container">
-            <div class="read-more-toggle" id="readMoreToggle">
-                <span>Read More About Starlink Bundles</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="description" id="description">
-                <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
-                <p style="margin-top: 10px;">Our partnership with Safaricom M-Pesa makes payment quick and secure. Once payment is confirmed, your Starlink connection will be activated within minutes, giving you access to high-speed satellite internet anywhere in Kenya.</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="payment-modal" id="paymentModal">
-        <div class="modal-content">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h2 class="status-title" id="statusTitle">Payment Initiated!</h2>
-            <p class="status-message" id="statusMessage">
-                We have sent an STK push to your phone 
-                (<span class="phone-highlight" id="phoneNumber"></span>). 
-                Please enter your PIN to complete the bundles purchase.
-            </p>
-            <button class="modal-button" id="okButton">OK, Got It!</button>
-        </div>
-    </div>
-    
-    <div class="footer">
-        <p>Need help? Contact us at: <a href="mailto:Starrlinkhelp@gmail.com">contact us</a></p>
-        <p style="margin-top: 5px;">&copy; 2023 Starlink Kenya. All rights reserved.</p>
-    </div>
-
     <script>
-        // DOM Elements
-        const paymentPlans = document.querySelectorAll('.payment-plan');
-        const payButton = document.getElementById('payButton');
-        const readMoreToggle = document.getElementById('readMoreToggle');
-        const description = document.getElementById('description');
-        const paymentModal = document.getElementById('paymentModal');
-        const phoneNumberElement = document.getElementById('phoneNumber');
-        const statusTitle = document.getElementById('statusTitle');
-        const statusMessage = document.getElementById('statusMessage');
-        const okButton = document.getElementById('okButton');
-        
-        // Variables
-        let selectedPlan = {
-            amount: 225,
-            name: "31 Days - Unlimited"
-        };
-        
-        // Initialize by selecting the first plan
-        paymentPlans[2].classList.add('active');
-        
-        // Plan selection
-        paymentPlans.forEach(plan => {
-            plan.addEventListener('click', function() {
-                // Remove active class from all plans
-                paymentPlans.forEach(p => p.classList.remove('active'));
-                
-                // Add active class to selected plan
-                this.classList.add('active');
-                
-                // Update selected plan
-                selectedPlan.amount = this.getAttribute('data-amount');
-                selectedPlan.name = this.getAttribute('data-plan');
-                
-                // Update button text
-                payButton.innerHTML = `<i class="fas fa-money-check-alt"></i><span>Pay Ksh ${selectedPlan.amount} for ${selectedPlan.name}</span>`;
-            });
-        });
-        
-        // Toggle read more section
-        readMoreToggle.addEventListener('click', function() {
-            this.classList.toggle('active');
-            description.classList.toggle('active');
-        });
-        
-        // Payment button click
-        payButton.addEventListener('click', function() {
-            initiateMpesaPayment(selectedPlan.amount, selectedPlan.name);
-        });
-        
-        // Close modal
-        okButton.addEventListener('click', function() {
-            paymentModal.classList.remove('active');
-        });
-        
-        // Close modal when clicking outside
-        paymentModal.addEventListener('click', function(e) {
-            if (e.target === paymentModal) {
-                paymentModal.classList.remove('active');
-            }
-        });
-        
-        // M-Pesa payment function
-        function initiateMpesaPayment(amount, planName) {
-            let phone = prompt(`Enter your Safaricom phone number for ${planName}:`);
-            
+        function initiateMpesaPayment(amount) {
+            let phone = prompt("Enter your Safaricom phone number:");
+
             if (!phone || phone.length < 10) {
-                alert("❌ Invalid phone number. Please try again.");
+                alert("Invalid phone number. Please try again.");
                 return;
             }
-            
-            // Format phone number
-            if (phone.startsWith("0")) {
-                phone = "254" + phone.substring(1);
-            } else if (phone.startsWith("+254")) {
-                phone = phone.substring(1);
-            }
-            
-            // Simulate API call with animation
-            payButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i><span>Processing...</span>`;
-            payButton.classList.remove('pulse');
-            
-            // In a real implementation, you would call your backend API here
-            // For demo purposes, we'll simulate a successful response after 2 seconds
-            setTimeout(() => {
-                // Show success modal
-                phoneNumberElement.textContent = phone;
-                statusTitle.textContent = "Payment Initiated Successfully!";
-                statusMessage.innerHTML = `We have sent an STK push to your phone (<span class="phone-highlight">${phone}</span>). Please enter your PIN to complete your <strong>${planName}</strong> purchase.`;
-                paymentModal.classList.add('active');
-                
-                // Reset button
-                payButton.innerHTML = `<i class="fas fa-money-check-alt"></i><span>Pay Ksh ${selectedPlan.amount} for ${selectedPlan.name}</span>`;
-                payButton.classList.add('pulse');
-            }, 2000);
-            
-            // This is where your actual fetch call would go
-            /*
+
             fetch('/mpesa/stk_push/', {
                 method: 'POST',
                 headers: {
@@ -631,27 +104,21 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    phoneNumberElement.textContent = phone;
-                    statusTitle.textContent = "Payment Initiated Successfully!";
-                    statusMessage.innerHTML = `We have sent an STK push to your phone (<span class="phone-highlight">${phone}</span>). Please enter your PIN to complete your <strong>${planName}</strong> purchase.`;
-                    paymentModal.classList.add('active');
+                    // Show success message with tick and instructions
+                    document.getElementById("payment-status").style.display = "block";
+                    document.getElementById("success-tick").style.display = "inline-block";
+                    document.getElementById("status-message").innerText = "Success!";
+                    document.getElementById("instruction-message").innerText = "We have sent an STK push to your phone (" + phone + "). Please enter your PIN to complete the bundles purchase.";
+                    document.getElementById("ok-button").style.display = "inline-block"; // Show the OK button
                 } else {
                     alert("❌ Failed: " + data.message);
                 }
-                
-                // Reset button
-                payButton.innerHTML = `<i class="fas fa-money-check-alt"></i><span>Pay Ksh ${selectedPlan.amount} for ${selectedPlan.name}</span>`;
-                payButton.classList.add('pulse');
             })
             .catch(error => {
                 alert("⚠ An error occurred: " + error);
-                payButton.innerHTML = `<i class="fas fa-money-check-alt"></i><span>Pay Ksh ${selectedPlan.amount} for ${selectedPlan.name}</span>`;
-                payButton.classList.add('pulse');
             });
-            */
         }
-        
-        // CSRF Token function (for Django)
+
         function getCSRFToken() {
             let cookieValue = null;
             let cookies = document.cookie.split(';');
@@ -664,24 +131,48 @@
             }
             return cookieValue;
         }
-        
-        // Add some floating animation to the container
-        const container = document.querySelector('.container');
-        let floatDirection = 1;
-        
-        function floatAnimation() {
-            let currentTransform = container.style.transform || 'translateY(0px)';
-            let currentY = parseFloat(currentTransform.match(/-?\d+\.?\d*/)) || 0;
-            
-            if (currentY > 5) floatDirection = -1;
-            if (currentY < -5) floatDirection = 1;
-            
-            container.style.transform = `translateY(${currentY + floatDirection * 0.2}px)`;
-            requestAnimationFrame(floatAnimation);
+
+        function toggleDescription() {
+            let description = document.getElementById("description");
+            let readMore = document.getElementById("readMore");
+            if (description.style.display === "none") {
+                description.style.display = "block";
+                readMore.innerText = "Read Less";
+            } else {
+                description.style.display = "none";
+                readMore.innerText = "Read More";
+            }
         }
-        
-        // Start floating animation after a delay
-        setTimeout(floatAnimation, 2000);
+
+        function closeMessage() {
+            document.getElementById("payment-status").style.display = "none";
+            document.getElementById("ok-button").style.display = "none"; // Hide the OK button
+        }
     </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Select Payment Plan</h2>
+        <button class="button" onclick="initiateMpesaPayment(85)">7 Days - 10GB (Ksh 85)</button>
+        <button class="button" onclick="initiateMpesaPayment(155)">21 Days - 30GB (Ksh155)</button>
+        <button class="button" onclick="initiateMpesaPayment(225)">31 Days - Unlimited (Ksh225)</button>
+
+        <p class="read-more" id="readMore" onclick="toggleDescription()">Read More</p>
+        <div class="description" id="description">
+            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
+        </div>
+
+        <!-- Payment status section -->
+        <div id="payment-status">
+            <span id="success-tick">✔</span>
+            <p id="status-message"></p>
+            <p id="instruction-message"></p>
+            <button id="ok-button" onclick="closeMessage()">OK</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Contact us at: <a href="mailto:Starrlinkg@gmail.com">Starrlinkhelp</a></p>
+    </div>
 </body>
 </html>
