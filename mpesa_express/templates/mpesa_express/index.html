@@ -22,12 +22,50 @@
             padding: 20px;
             animation: gradientShift 10s ease infinite;
             background-size: 200% 200%;
+            position: relative;
+            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
         }
 
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        /* Satellite Animation */
+        .satellite {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.6);
+            animation: orbit 20s linear infinite;
+            pointer-events: none;
+        }
+
+        .satellite:nth-child(1) {
+            top: 10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .satellite:nth-child(2) {
+            top: 30%;
+            right: -10%;
+            animation-delay: 5s;
+            animation-direction: reverse;
+        }
+
+        .satellite:nth-child(3) {
+            bottom: 20%;
+            left: -10%;
+            animation-delay: 10s;
+        }
+
+        @keyframes orbit {
+            0% { transform: translateX(0) translateY(0) rotate(0deg); }
+            25% { transform: translateX(100vw) translateY(-50px) rotate(90deg); }
+            50% { transform: translateX(100vw) translateY(100px) rotate(180deg); }
+            75% { transform: translateX(0) translateY(50px) rotate(270deg); }
+            100% { transform: translateX(0) translateY(0) rotate(360deg); }
         }
 
         .container {
@@ -41,6 +79,8 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transform: translateY(0);
             animation: floatIn 0.8s ease-out;
+            position: relative;
+            z-index: 1; /* Ensure container is above satellites */
         }
 
         @keyframes floatIn {
@@ -386,10 +426,11 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
-        /* Responsive design */
-        @media (max-width: 600px) {
+        /* Enhanced Responsive design */
+        @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
+                margin: 20px;
             }
             
             h2 {
@@ -398,6 +439,14 @@
             
             .button {
                 padding: 18px 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .button .plan-info {
+                align-items: center;
+                text-align: center;
             }
             
             .button .plan-title {
@@ -408,8 +457,68 @@
                 font-size: 20px;
             }
             
+            .button .plan-icon {
+                align-self: center;
+            }
+            
             .modal-content {
                 padding: 30px 20px;
+                width: 95%;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .footer {
+                font-size: 13px;
+                padding-top: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+                border-radius: 16px;
+            }
+            
+            h2 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            
+            .button {
+                padding: 15px 18px;
+                margin: 10px 0;
+            }
+            
+            .button .plan-title {
+                font-size: 15px;
+            }
+            
+            .button .plan-price {
+                font-size: 18px;
+            }
+            
+            .modal-content {
+                padding: 25px 15px;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+            }
+            
+            #payment-status {
+                padding: 20px;
+            }
+            
+            #status-message {
+                font-size: 18px;
             }
         }
 
@@ -437,6 +546,11 @@
     </style>
 </head>
 <body>
+    <!-- Satellite Animation Elements -->
+    <i class="fas fa-satellite satellite"></i>
+    <i class="fas fa-satellite satellite"></i>
+    <i class="fas fa-satellite satellite"></i>
+
     <!-- Modal for phone input -->
     <div class="modal-overlay" id="phoneModal">
         <div class="modal-content">
@@ -493,215 +607,4 @@
         </p>
         
         <div class="description" id="description">
-            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
-        </div>
-
-        <!-- Payment status section -->
-        <div id="payment-status">
-            <div id="success-tick">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <p id="status-message"></p>
-            <p id="instruction-message"></p>
-            <button id="ok-button" onclick="closeMessage()">OK</button>
-        </div>
-    </div>
-
-    <div class="footer">
-        <p>Contact us at: <a href="mailto:Starrlinkhelpgmail">contact us</a></p>
-        <p style="margin-top: 10px; font-size: 12px;">Secure payment powered by M-Pesa</p>
-    </div>
-
-    <script>
-        // Global variables
-        let currentAmount = 0;
-        let currentPlanName = "";
-        
-        // Plan mapping
-        const planMap = {
-            85: "7 Days - 10GB",
-            155: "21 Days - 30GB", 
-            225: "31 Days - Unlimited"
-        };
-
-        // Show custom modal instead of default prompt
-        function showPhoneModal(amount) {
-            currentAmount = amount;
-            currentPlanName = planMap[amount];
-            
-            // Update modal title with plan info
-            document.querySelector('.modal-title').textContent = `Pay ${currentPlanName} - Ksh ${amount}`;
-            
-            // Clear previous input
-            document.getElementById('phoneInput').value = '';
-            
-            // Show modal
-            document.getElementById('phoneModal').style.display = 'flex';
-        }
-
-        // Hide modal
-        function hidePhoneModal() {
-            document.getElementById('phoneModal').style.display = 'none';
-        }
-
-        // Toggle description with animation
-        function toggleDescription() {
-            const description = document.getElementById("description");
-            const readMore = document.getElementById("readMore");
-            
-            description.classList.toggle('active');
-            readMore.classList.toggle('active');
-            
-            const isExpanded = description.classList.contains('active');
-            readMore.querySelector('span').innerText = isExpanded ? "Read Less" : "Read More";
-        }
-
-        // Show loading indicator
-        function showLoading() {
-            document.getElementById('loading').style.display = 'block';
-        }
-
-        // Hide loading indicator
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        // Validate phone number
-        function validatePhoneNumber(phone) {
-            const cleaned = phone.replace(/\D/g, '');
-            
-            // Check if it's a valid Safaricom number
-            if (cleaned.length === 10 && cleaned.startsWith('07')) {
-                return cleaned;
-            } else if (cleaned.length === 12 && cleaned.startsWith('2547')) {
-                return cleaned;
-            } else if (cleaned.length === 9 && cleaned.startsWith('7')) {
-                return `0${cleaned}`;
-            }
-            
-            return null;
-        }
-
-        // Format phone for display
-        function formatPhone(phone) {
-            const cleaned = phone.replace(/\D/g, '');
-            
-            if (cleaned.length === 10) {
-                return `0${cleaned.substring(1, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7)}`;
-            }
-            
-            return phone;
-        }
-
-        // Show payment success message
-        function showPaymentSuccess(phone) {
-            const formattedPhone = formatPhone(phone);
-            
-            document.getElementById("payment-status").style.display = "block";
-            document.getElementById("status-message").innerText = "Payment Initiated Successfully!";
-            document.getElementById("instruction-message").innerText = `We have sent an STK push to your phone (${formattedPhone}). Please enter your PIN to complete the ${currentPlanName} purchase.`;
-        }
-
-        // Show payment error
-        function showPaymentError(message) {
-            alert(`❌ ${message}`);
-        }
-
-        // Close payment status message
-        function closeMessage() {
-            document.getElementById("payment-status").style.display = "none";
-        }
-
-        // Process payment
-        function processPayment() {
-            const phoneInput = document.getElementById('phoneInput');
-            const phone = phoneInput.value.trim();
-            
-            const validatedPhone = validatePhoneNumber(phone);
-            
-            if (!validatedPhone) {
-                showPaymentError("Invalid phone number. Please enter a valid Safaricom number (e.g., 0712345678)");
-                phoneInput.focus();
-                return;
-            }
-            
-            // Hide modal and show loading
-            hidePhoneModal();
-            showLoading();
-            
-            // Simulate API call delay
-            setTimeout(() => {
-                hideLoading();
-                
-                // In a real application, you would call your backend API here
-                fetch('/mpesa/stk_push/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCSRFToken()
-                    },
-                    body: JSON.stringify({ 
-                        phone_number: validatedPhone, 
-                        amount: currentAmount 
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        showPaymentSuccess(validatedPhone);
-                    } else {
-                        showPaymentError("Failed: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    showPaymentError("An error occurred: " + error);
-                });
-                
-                // For demo purposes only (remove in production):
-                // showPaymentSuccess(validatedPhone);
-                
-            }, 1500);
-        }
-
-        // Get CSRF token for Django
-        function getCSRFToken() {
-            let cookieValue = null;
-            let cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.startsWith('csrftoken=')) {
-                    cookieValue = cookie.substring('csrftoken='.length, cookie.length);
-                    break;
-                }
-            }
-            return cookieValue;
-        }
-
-        // Event listeners for modal
-        document.getElementById('confirmBtn').addEventListener('click', processPayment);
-        document.getElementById('cancelBtn').addEventListener('click', hidePhoneModal);
-        
-        // Allow Enter key to confirm payment
-        document.getElementById('phoneInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                processPayment();
-            }
-        });
-        
-        // Close modal when clicking outside
-        document.getElementById('phoneModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hidePhoneModal();
-            }
-        });
-
-        // Add initial animation to buttons
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.button');
-            buttons.forEach((button, index) => {
-                button.style.animationDelay = `${index * 0.1}s`;
-            });
-        });
-    </script>
-</body>
-</html>
+            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These
