@@ -3,122 +3,667 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment</title>
+    <title>Starlink Payment Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: gradientShift 10s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+            animation: floatIn 0.8s ease-out;
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         h2 {
+            color: #2d3748;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #33710dd1, #28a745);
+            border-radius: 2px;
+        }
+
+        .button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 15px 0;
+            padding: 20px 25px;
+            font-size: 17px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .button:hover::before {
+            left: 100%;
+        }
+
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(40, 167, 69, 0.4);
+            background: linear-gradient(135deg, #218838, #28a745);
+        }
+
+        .button:active {
+            transform: translateY(-2px);
+        }
+
+        .button .plan-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .button .plan-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .button .plan-price {
+            font-size: 22px;
+            font-weight: 800;
+            opacity: 0.95;
+        }
+
+        .button .plan-icon {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+
+        .read-more {
+            color: #4a5568;
+            cursor: pointer;
+            text-align: center;
+            margin: 25px 0 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: color 0.3s;
+        }
+
+        .read-more:hover {
             color: #33710dd1;
         }
-        .container {
-            background: white;
-            padding: 30px;
+
+        .read-more i {
+            transition: transform 0.3s;
+        }
+
+        .read-more.active i {
+            transform: rotate(180deg);
+        }
+
+        .description {
+            max-height: 0;
+            overflow: hidden;
+            text-align: left;
+            margin-top: 10px;
+            line-height: 1.6;
+            color: #4a5568;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            background: #f7fafc;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
+            padding: 0 20px;
         }
-        .button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background: #28a745;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
+
+        .description.active {
+            max-height: 300px;
+            padding: 20px;
         }
-        .button:hover {
-            background: #218838;
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #718096;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
         }
-        .read-more {
-            color: blue;
-            cursor: pointer;
+
+        .footer a {
+            color: #33710dd1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #28a745;
             text-decoration: underline;
         }
-        .description {
-            display: none;
-            text-align: left;
-            margin-top: 10px;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #666;
-        }
+
         #payment-status {
             display: none;
-            text-align: left;
-            margin-top: 20px;
+            background: linear-gradient(135deg, #f0fff4, #dcffe4);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 25px;
+            border-left: 5px solid #28a745;
+            animation: slideIn 0.5s ease;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
         }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         #success-tick {
-            color: green;
-            font-size: 24px;
-            display: inline-block;
+            color: #28a745;
+            font-size: 36px;
+            display: block;
+            text-align: center;
+            margin-bottom: 15px;
+            animation: bounce 1s ease;
         }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
         #status-message {
-            font-weight: bold;
-            margin-top: 10px;
+            font-weight: 700;
+            font-size: 22px;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
         }
+
         #instruction-message {
-            margin-top: 10px;
+            color: #4a5568;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 20px;
         }
+
         #ok-button {
-            background-color: #007bff;
+            background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 15px 35px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
+            border-radius: 10px;
+            margin: 10px auto 0;
+            display: block;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
         }
+
         #ok-button:hover {
-            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+            background: linear-gradient(135deg, #0056b3, #004494);
+        }
+
+        /* Custom modal style instead of default prompt */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            animation: modalAppear 0.4s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            transition: border-color 0.3s;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+        }
+
+        .modal-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+            
+            .button {
+                padding: 18px 20px;
+            }
+            
+            .button .plan-title {
+                font-size: 16px;
+            }
+            
+            .button .plan-price {
+                font-size: 20px;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #28a745;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
+</head>
+<body>
+    <!-- Modal for phone input -->
+    <div class="modal-overlay" id="phoneModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h2 class="modal-title">Enter Your Safaricom Number</h2>
+            <p style="color: #718096; margin-bottom: 20px;">We'll send an M-Pesa payment request to this number</p>
+            <input type="tel" id="phoneInput" class="modal-input" placeholder="07XX XXX XXX" autofocus>
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" id="cancelBtn">Cancel</button>
+                <button class="modal-btn primary" id="confirmBtn">Confirm Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Processing payment...</p>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <h2>Select Payment Plan</h2>
+        
+        <button class="button" onclick="showPhoneModal(85)">
+            <div class="plan-info">
+                <span class="plan-title">7 Days - 10GB</span>
+                <span class="plan-price">Ksh 85</span>
+            </div>
+            <i class="fas fa-wifi plan-icon"></i>
+        </button>
+        
+        <button class="button" onclick="showPhoneModal(155)">
+            <div class="plan-info">
+                <span class="plan-title">21 Days - 30GB</span>
+                <span class="plan-price">Ksh 155</span>
+            </div>
+            <i class="fas fa-bolt plan-icon"></i>
+        </button>
+        
+        <button class="button" onclick="showPhoneModal(225)">
+            <div class="plan-info">
+                <span class="plan-title">31 Days - Unlimited</span>
+                <span class="plan-price">Ksh 225</span>
+            </div>
+            <i class="fas fa-infinity plan-icon"></i>
+        </button>
+
+        <p class="read-more" id="readMore" onclick="toggleDescription()">
+            <span>Read More</span>
+            <i class="fas fa-chevron-down"></i>
+        </p>
+        
+        <div class="description" id="description">
+            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
+        </div>
+
+        <!-- Payment status section -->
+        <div id="payment-status">
+            <div id="success-tick">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <p id="status-message"></p>
+            <p id="instruction-message"></p>
+            <button id="ok-button" onclick="closeMessage()">OK</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Contact us at: <a href="mailto:Starrlinkhelpgmail">contact us</a></p>
+        <p style="margin-top: 10px; font-size: 12px;">Secure payment powered by M-Pesa</p>
+    </div>
+
     <script>
-        function initiateMpesaPayment(amount) {
-            let phone = prompt("Enter your Safaricom phone number:");
+        // Global variables
+        let currentAmount = 0;
+        let currentPlanName = "";
+        
+        // Plan mapping
+        const planMap = {
+            85: "7 Days - 10GB",
+            155: "21 Days - 30GB", 
+            225: "31 Days - Unlimited"
+        };
 
-            if (!phone || phone.length < 10) {
-                alert("Invalid phone number. Please try again.");
-                return;
-            }
-
-            fetch('/mpesa/stk_push/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()
-                },
-                body: JSON.stringify({ phone_number: phone, amount: amount })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    // Show success message with tick and instructions
-                    document.getElementById("payment-status").style.display = "block";
-                    document.getElementById("success-tick").style.display = "inline-block";
-                    document.getElementById("status-message").innerText = "Success!";
-                    document.getElementById("instruction-message").innerText = "We have sent an STK push to your phone (" + phone + "). Please enter your PIN to complete the bundles purchase.";
-                    document.getElementById("ok-button").style.display = "inline-block"; // Show the OK button
-                } else {
-                    alert("❌ Failed: " + data.message);
-                }
-            })
-            .catch(error => {
-                alert("⚠ An error occurred: " + error);
-            });
+        // Show custom modal instead of default prompt
+        function showPhoneModal(amount) {
+            currentAmount = amount;
+            currentPlanName = planMap[amount];
+            
+            // Update modal title with plan info
+            document.querySelector('.modal-title').textContent = `Pay ${currentPlanName} - Ksh ${amount}`;
+            
+            // Clear previous input
+            document.getElementById('phoneInput').value = '';
+            
+            // Show modal
+            document.getElementById('phoneModal').style.display = 'flex';
         }
 
+        // Hide modal
+        function hidePhoneModal() {
+            document.getElementById('phoneModal').style.display = 'none';
+        }
+
+        // Toggle description with animation
+        function toggleDescription() {
+            const description = document.getElementById("description");
+            const readMore = document.getElementById("readMore");
+            
+            description.classList.toggle('active');
+            readMore.classList.toggle('active');
+            
+            const isExpanded = description.classList.contains('active');
+            readMore.querySelector('span').innerText = isExpanded ? "Read Less" : "Read More";
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Validate phone number
+        function validatePhoneNumber(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            
+            // Check if it's a valid Safaricom number
+            if (cleaned.length === 10 && cleaned.startsWith('07')) {
+                return cleaned;
+            } else if (cleaned.length === 12 && cleaned.startsWith('2547')) {
+                return cleaned;
+            } else if (cleaned.length === 9 && cleaned.startsWith('7')) {
+                return `0${cleaned}`;
+            }
+            
+            return null;
+        }
+
+        // Format phone for display
+        function formatPhone(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            
+            if (cleaned.length === 10) {
+                return `0${cleaned.substring(1, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7)}`;
+            }
+            
+            return phone;
+        }
+
+        // Show payment success message
+        function showPaymentSuccess(phone) {
+            const formattedPhone = formatPhone(phone);
+            
+            document.getElementById("payment-status").style.display = "block";
+            document.getElementById("status-message").innerText = "Payment Initiated Successfully!";
+            document.getElementById("instruction-message").innerText = `We have sent an STK push to your phone (${formattedPhone}). Please enter your PIN to complete the ${currentPlanName} purchase.`;
+        }
+
+        // Show payment error
+        function showPaymentError(message) {
+            alert(`❌ ${message}`);
+        }
+
+        // Close payment status message
+        function closeMessage() {
+            document.getElementById("payment-status").style.display = "none";
+        }
+
+        // Process payment
+        function processPayment() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = phoneInput.value.trim();
+            
+            const validatedPhone = validatePhoneNumber(phone);
+            
+            if (!validatedPhone) {
+                showPaymentError("Invalid phone number. Please enter a valid Safaricom number (e.g., 0712345678)");
+                phoneInput.focus();
+                return;
+            }
+            
+            // Hide modal and show loading
+            hidePhoneModal();
+            showLoading();
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                hideLoading();
+                
+                // In a real application, you would call your backend API here
+                fetch('/mpesa/stk_push/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({ 
+                        phone_number: validatedPhone, 
+                        amount: currentAmount 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        showPaymentSuccess(validatedPhone);
+                    } else {
+                        showPaymentError("Failed: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    showPaymentError("An error occurred: " + error);
+                });
+                
+                // For demo purposes only (remove in production):
+                // showPaymentSuccess(validatedPhone);
+                
+            }, 1500);
+        }
+
+        // Get CSRF token for Django
         function getCSRFToken() {
             let cookieValue = null;
             let cookies = document.cookie.split(';');
@@ -132,47 +677,31 @@
             return cookieValue;
         }
 
-        function toggleDescription() {
-            let description = document.getElementById("description");
-            let readMore = document.getElementById("readMore");
-            if (description.style.display === "none") {
-                description.style.display = "block";
-                readMore.innerText = "Read Less";
-            } else {
-                description.style.display = "none";
-                readMore.innerText = "Read More";
+        // Event listeners for modal
+        document.getElementById('confirmBtn').addEventListener('click', processPayment);
+        document.getElementById('cancelBtn').addEventListener('click', hidePhoneModal);
+        
+        // Allow Enter key to confirm payment
+        document.getElementById('phoneInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processPayment();
             }
-        }
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('phoneModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hidePhoneModal();
+            }
+        });
 
-        function closeMessage() {
-            document.getElementById("payment-status").style.display = "none";
-            document.getElementById("ok-button").style.display = "none"; // Hide the OK button
-        }
+        // Add initial animation to buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach((button, index) => {
+                button.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
     </script>
-</head>
-<body>
-    <div class="container">
-        <h2>Select Payment Plan</h2>
-        <button class="button" onclick="initiateMpesaPayment(85)">7 Days - 10GB (Ksh 85)</button>
-        <button class="button" onclick="initiateMpesaPayment(155)">21 Days - 30GB (Ksh155)</button>
-        <button class="button" onclick="initiateMpesaPayment(225)">31 Days - Unlimited (Ksh225)</button>
-
-        <p class="read-more" id="readMore" onclick="toggleDescription()">Read More</p>
-        <div class="description" id="description">
-            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
-        </div>
-
-        <!-- Payment status section -->
-        <div id="payment-status">
-            <span id="success-tick">✔</span>
-            <p id="status-message"></p>
-            <p id="instruction-message"></p>
-            <button id="ok-button" onclick="closeMessage()">OK</button>
-        </div>
-    </div>
-
-    <div class="footer">
-        <p>Contact us at: <a href="mailto:Starrlinkhelpgmail.com">contact us</a></p>
-    </div>
 </body>
 </html>
