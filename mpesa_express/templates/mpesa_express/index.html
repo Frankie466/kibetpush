@@ -2,373 +2,380 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Starlink Payment Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Starlink Payment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
-            animation: gradientShift 10s ease infinite;
-            background-size: 200% 200%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.5;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
+        /* Container */
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
+            background: rgba(255, 255, 255, 0.98);
+            width: 100%;
+            max-width: 480px;
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 500px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px auto;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transform: translateY(0);
-            animation: floatIn 0.8s ease-out;
         }
 
-        @keyframes floatIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h2 {
-            color: #2d3748;
+        /* Header */
+        .header {
             text-align: center;
-            font-size: 28px;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
+            padding: 0 10px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 1.8rem;
             font-weight: 700;
-            position: relative;
-            padding-bottom: 15px;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #33710d, #28a745);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, #33710dd1, #28a745);
-            border-radius: 2px;
+        .header p {
+            color: #718096;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
 
-        .button {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin: 15px 0;
-            padding: 20px 25px;
-            font-size: 17px;
+        /* Plan Selection */
+        .plan-selection {
+            margin-bottom: 24px;
+        }
+
+        .plan-title {
+            color: #4a5568;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #28a745, #20c997);
-            border: none;
-            border-radius: 12px;
+            margin-bottom: 16px;
+            text-align: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f4f8;
+        }
+
+        /* Plan Cards */
+        .plan-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
 
-        .button::before {
+        .plan-card:hover, .plan-card.active {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f0fff4, #dcffe4);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.15);
+        }
+
+        .plan-card.active::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #33710d, #28a745);
         }
 
-        .button:hover::before {
-            left: 100%;
-        }
-
-        .button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(40, 167, 69, 0.4);
-            background: linear-gradient(135deg, #218838, #28a745);
-        }
-
-        .button:active {
-            transform: translateY(-2px);
-        }
-
-        .button .plan-info {
+        .plan-header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: flex-start;
-            text-align: left;
+            margin-bottom: 12px;
         }
 
-        .button .plan-title {
-            font-size: 18px;
+        .plan-name {
+            font-size: 1.2rem;
             font-weight: 700;
-            margin-bottom: 5px;
+            color: #2d3748;
+            line-height: 1.3;
         }
 
-        .button .plan-price {
-            font-size: 22px;
+        .plan-price {
+            font-size: 1.5rem;
             font-weight: 800;
-            opacity: 0.95;
+            color: #28a745;
+            line-height: 1;
         }
 
-        .button .plan-icon {
-            font-size: 24px;
-            opacity: 0.9;
+        .plan-details {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
         }
 
-        .read-more {
-            color: #4a5568;
+        .plan-icon {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            color: #28a745;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .plan-card:hover .plan-icon, .plan-card.active .plan-icon {
+            opacity: 1;
+        }
+
+        /* Action Button */
+        .action-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
-            text-align: center;
-            margin: 25px 0 15px;
-            font-weight: 600;
+            margin: 24px 0;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            transition: color 0.3s;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .read-more:hover {
-            color: #33710dd1;
+        .action-btn:active {
+            transform: scale(0.98);
         }
 
-        .read-more i {
+        .action-btn:hover {
+            box-shadow: 0 12px 30px rgba(40, 167, 69, 0.4);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Info Section */
+        .info-section {
+            margin: 24px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .info-toggle span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .info-toggle i {
+            color: #28a745;
             transition: transform 0.3s;
         }
 
-        .read-more.active i {
+        .info-toggle.active i {
             transform: rotate(180deg);
         }
 
-        .description {
+        .info-content {
             max-height: 0;
             overflow: hidden;
-            text-align: left;
-            margin-top: 10px;
-            line-height: 1.6;
-            color: #4a5568;
-            transition: max-height 0.5s ease, padding 0.5s ease;
-            background: #f7fafc;
-            border-radius: 10px;
-            padding: 0 20px;
-        }
-
-        .description.active {
-            max-height: 300px;
-            padding: 20px;
-        }
-
-        .footer {
-            margin-top: 30px;
-            font-size: 14px;
             color: #718096;
+            line-height: 1.6;
+            transition: max-height 0.5s ease, margin-top 0.5s ease;
+            margin-top: 0;
+        }
+
+        .info-content.active {
+            max-height: 500px;
+            margin-top: 16px;
+        }
+
+        /* Footer */
+        .footer {
             text-align: center;
+            padding: 20px 0 0;
+            margin-top: 20px;
             border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
+            color: #718096;
+            font-size: 0.9rem;
         }
 
         .footer a {
-            color: #33710dd1;
+            color: #28a745;
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s;
         }
 
         .footer a:hover {
-            color: #28a745;
             text-decoration: underline;
         }
 
-        #payment-status {
-            display: none;
-            background: linear-gradient(135deg, #f0fff4, #dcffe4);
-            border-radius: 16px;
-            padding: 30px;
-            margin-top: 25px;
-            border-left: 5px solid #28a745;
-            animation: slideIn 0.5s ease;
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        #success-tick {
-            color: #28a745;
-            font-size: 36px;
-            display: block;
-            text-align: center;
-            margin-bottom: 15px;
-            animation: bounce 1s ease;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-
-        #status-message {
-            font-weight: 700;
-            font-size: 22px;
-            color: #2d3748;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        #instruction-message {
-            color: #4a5568;
-            line-height: 1.6;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        #ok-button {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 10px;
-            margin: 10px auto 0;
-            display: block;
-            transition: all 0.3s;
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
-        }
-
-        #ok-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
-            background: linear-gradient(135deg, #0056b3, #004494);
-        }
-
-        /* Custom modal style instead of default prompt */
+        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
             display: none;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             z-index: 1000;
+            padding: 20px;
             backdrop-filter: blur(5px);
         }
 
-        .modal-content {
+        .modal {
             background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            animation: modalAppear 0.4s ease;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px 25px;
+            position: relative;
+            animation: modalSlideUp 0.3s ease;
         }
 
-        @keyframes modalAppear {
+        @keyframes modalSlideUp {
             from {
                 opacity: 0;
-                transform: scale(0.8);
+                transform: translateY(40px);
             }
             to {
                 opacity: 1;
-                transform: scale(1);
+                transform: translateY(0);
             }
         }
 
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
         .modal-icon {
-            font-size: 48px;
+            font-size: 3.5rem;
             color: #28a745;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .modal-title {
-            font-size: 24px;
+            font-size: 1.4rem;
             font-weight: 700;
             color: #2d3748;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
-        .modal-input {
-            width: 100%;
-            padding: 18px;
-            font-size: 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
+        .modal-subtitle {
+            color: #718096;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
             margin: 20px 0;
-            transition: border-color 0.3s;
         }
 
-        .modal-input:focus {
+        .input-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #2d3748;
+            transition: all 0.3s;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .phone-input:focus {
             outline: none;
             border-color: #28a745;
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+        }
+
+        .input-hint {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            margin-top: 8px;
+            text-align: center;
         }
 
         .modal-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         .modal-btn {
-            flex: 1;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+        }
+
+        .modal-btn.secondary {
+            background: #f1f5f9;
+            color: #4a5568;
         }
 
         .modal-btn.primary {
@@ -376,331 +383,570 @@
             color: white;
         }
 
-        .modal-btn.secondary {
-            background: #e2e8f0;
-            color: #4a5568;
+        .modal-btn:active {
+            transform: scale(0.98);
         }
 
-        .modal-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        /* Success Modal */
+        .success-modal .modal-icon {
+            animation: bounceIn 0.6s ease;
         }
 
-        /* Responsive design */
-        @media (max-width: 600px) {
-            .container {
-                padding: 30px 20px;
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
             }
-            
-            h2 {
-                font-size: 24px;
+            50% {
+                transform: scale(1.05);
             }
-            
-            .button {
-                padding: 18px 20px;
+            70% {
+                transform: scale(0.9);
             }
-            
-            .button .plan-title {
-                font-size: 16px;
-            }
-            
-            .button .plan-price {
-                font-size: 20px;
-            }
-            
-            .modal-content {
-                padding: 30px 20px;
+            100% {
+                transform: scale(1);
+                opacity: 1;
             }
         }
 
-        /* Loading animation */
-        .loading {
-            display: none;
-            text-align: center;
+        .success-details {
+            background: #f0fff4;
+            border-radius: 12px;
+            padding: 16px;
             margin: 20px 0;
+            border: 1px solid #c6f6d5;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #28a745;
+        .success-details p {
+            color: #2d3748;
+            margin: 8px 0;
+        }
+
+        .highlight {
+            color: #28a745;
+            font-weight: 700;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 20px;
+                border-radius: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .plan-card {
+                padding: 18px;
+            }
+            
+            .plan-name {
+                font-size: 1.1rem;
+            }
+            
+            .plan-price {
+                font-size: 1.3rem;
+            }
+            
+            .modal {
+                padding: 25px 20px;
+            }
+            
+            .modal-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .plan-card {
+                padding: 16px;
+            }
+            
+            .action-btn {
+                padding: 18px;
+                font-size: 1rem;
+            }
+            
+            .modal-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Landscape Mode */
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .plan-card {
+                padding: 12px 16px;
+                margin-bottom: 10px;
+            }
+            
+            .action-btn {
+                margin: 16px 0;
+                padding: 16px;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(26, 32, 44, 0.98);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .header h1, .plan-name, .modal-title {
+                color: #f7fafc;
+            }
+            
+            .header p, .plan-details, .info-content, .modal-subtitle, .input-label {
+                color: #cbd5e0;
+            }
+            
+            .plan-card {
+                background: rgba(45, 55, 72, 0.5);
+                border-color: #4a5568;
+            }
+            
+            .info-section {
+                background: rgba(45, 55, 72, 0.5);
+                border-color: #4a5568;
+            }
+            
+            .phone-input {
+                background: #2d3748;
+                border-color: #4a5568;
+                color: #f7fafc;
+            }
+            
+            .modal-btn.secondary {
+                background: #4a5568;
+                color: #f7fafc;
+            }
+            
+            .footer {
+                border-color: #4a5568;
+                color: #cbd5e0;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Modal for phone input -->
+    <!-- Phone Input Modal -->
     <div class="modal-overlay" id="phoneModal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-mobile-alt"></i>
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h2 class="modal-title" id="modalPlanTitle">Enter Phone Number</h2>
+                <p class="modal-subtitle">We'll send an M-Pesa STK Push to complete payment</p>
             </div>
-            <h2 class="modal-title">Enter Your Safaricom Number</h2>
-            <p style="color: #718096; margin-bottom: 20px;">We'll send an M-Pesa payment request to this number</p>
-            <input type="tel" id="phoneInput" class="modal-input" placeholder="07XX XXX XXX" autofocus>
+            
+            <div class="input-group">
+                <label class="input-label" for="phoneInput">Safaricom Phone Number</label>
+                <input type="tel" id="phoneInput" class="phone-input" 
+                       placeholder="0712 345 678" 
+                       inputmode="numeric"
+                       pattern="[0-9]*"
+                       maxlength="12">
+                <div class="input-hint">Format: 07XX XXX XXX or 2547XX XXX XXX</div>
+            </div>
+            
             <div class="modal-buttons">
                 <button class="modal-btn secondary" id="cancelBtn">Cancel</button>
-                <button class="modal-btn primary" id="confirmBtn">Confirm Payment</button>
+                <button class="modal-btn primary" id="confirmBtn">Continue to Pay</button>
             </div>
         </div>
     </div>
 
-    <!-- Loading indicator -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <p>Processing payment...</p>
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal success-modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="modal-title">Payment Initiated!</h2>
+                <p class="modal-subtitle">Check your phone to complete payment</p>
+            </div>
+            
+            <div class="success-details">
+                <p><strong>Plan:</strong> <span id="successPlanName">-</span></p>
+                <p><strong>Amount:</strong> <span id="successAmount" class="highlight">-</span></p>
+                <p><strong>Phone:</strong> <span id="successPhone" class="highlight">-</span></p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 24px;">
+                <p style="color: #718096; margin-bottom: 16px;">
+                    <i class="fas fa-info-circle"></i> Enter your M-Pesa PIN when prompted
+                </p>
+                <button class="modal-btn primary" id="closeSuccessBtn" style="width: 100%;">
+                    OK, Got It
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- Main content -->
+    <!-- Main Content -->
     <div class="container">
-        <h2>Select Payment Plan</h2>
-        
-        <button class="button" onclick="showPhoneModal(85)">
-            <div class="plan-info">
-                <span class="plan-title">7 Days - 10GB</span>
-                <span class="plan-price">Ksh 85</span>
-            </div>
-            <i class="fas fa-wifi plan-icon"></i>
-        </button>
-        
-        <button class="button" onclick="showPhoneModal(155)">
-            <div class="plan-info">
-                <span class="plan-title">21 Days - 30GB</span>
-                <span class="plan-price">Ksh 155</span>
-            </div>
-            <i class="fas fa-bolt plan-icon"></i>
-        </button>
-        
-        <button class="button" onclick="showPhoneModal(225)">
-            <div class="plan-info">
-                <span class="plan-title">31 Days - Unlimited</span>
-                <span class="plan-price">Ksh 225</span>
-            </div>
-            <i class="fas fa-infinity plan-icon"></i>
-        </button>
-
-        <p class="read-more" id="readMore" onclick="toggleDescription()">
-            <span>Read More</span>
-            <i class="fas fa-chevron-down"></i>
-        </p>
-        
-        <div class="description" id="description">
-            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
+        <div class="header">
+            <h1>Starlink Internet Bundles</h1>
+            <p>Select a plan and pay securely with M-Pesa</p>
         </div>
 
-        <!-- Payment status section -->
-        <div id="payment-status">
-            <div id="success-tick">
-                <i class="fas fa-check-circle"></i>
+        <div class="plan-selection">
+            <div class="plan-title">Choose Your Plan</div>
+            
+            <div class="plan-card" data-amount="85" data-plan="7 Days - 10GB">
+                <div class="plan-header">
+                    <div class="plan-name">7 Days<br>10GB Data</div>
+                    <div class="plan-price">Ksh 85</div>
+                </div>
+                <div class="plan-details">Perfect for light browsing and emails</div>
+                <i class="fas fa-wifi plan-icon"></i>
             </div>
-            <p id="status-message"></p>
-            <p id="instruction-message"></p>
-            <button id="ok-button" onclick="closeMessage()">OK</button>
+            
+            <div class="plan-card" data-amount="155" data-plan="21 Days - 30GB">
+                <div class="plan-header">
+                    <div class="plan-name">21 Days<br>30GB Data</div>
+                    <div class="plan-price">Ksh 155</div>
+                </div>
+                <div class="plan-details">Great for streaming and remote work</div>
+                <i class="fas fa-bolt plan-icon"></i>
+            </div>
+            
+            <div class="plan-card" data-amount="225" data-plan="31 Days - Unlimited">
+                <div class="plan-header">
+                    <div class="plan-name">31 Days<br>Unlimited Data</div>
+                    <div class="plan-price">Ksh 225</div>
+                </div>
+                <div class="plan-details">Best value for heavy usage</div>
+                <i class="fas fa-infinity plan-icon"></i>
+            </div>
         </div>
-    </div>
 
-    <div class="footer">
-        <p>Contact us at: <a href="mailto:Starrlinkhelpgmail">contact us</a></p>
-        <p style="margin-top: 10px; font-size: 12px;">Secure payment powered by M-Pesa</p>
+        <button class="action-btn" id="payButton" disabled>
+            <i class="fas fa-lock"></i>
+            <span>Select a Plan to Pay</span>
+        </button>
+
+        <div class="info-section">
+            <div class="info-toggle" id="infoToggle">
+                <span>About Starlink Bundles</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="info-content" id="infoContent">
+                <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
+                <p style="margin-top: 12px;">Your payment is secured through Safaricom's M-Pesa platform. After payment confirmation, your Starlink connection will be activated within minutes.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Need help? <a href="mailto:Starrlinkg@gmail.com">Contact Support</a></p>
+            <p style="margin-top: 8px; font-size: 0.8rem;">
+                <i class="fas fa-shield-alt"></i> Secured by M-Pesa
+            </p>
+        </div>
     </div>
 
     <script>
-        // Global variables
-        let currentAmount = 0;
-        let currentPlanName = "";
-        
-        // Plan mapping
-        const planMap = {
-            85: "7 Days - 10GB",
-            155: "21 Days - 30GB", 
-            225: "31 Days - Unlimited"
-        };
+        // DOM Elements
+        const planCards = document.querySelectorAll('.plan-card');
+        const payButton = document.getElementById('payButton');
+        const phoneModal = document.getElementById('phoneModal');
+        const successModal = document.getElementById('successModal');
+        const phoneInput = document.getElementById('phoneInput');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+        const infoToggle = document.getElementById('infoToggle');
+        const infoContent = document.getElementById('infoContent');
+        const modalPlanTitle = document.getElementById('modalPlanTitle');
+        const successPlanName = document.getElementById('successPlanName');
+        const successAmount = document.getElementById('successAmount');
+        const successPhone = document.getElementById('successPhone');
 
-        // Show custom modal instead of default prompt
-        function showPhoneModal(amount) {
-            currentAmount = amount;
-            currentPlanName = planMap[amount];
+        // State
+        let selectedPlan = null;
+        let isProcessing = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial button state
+            updatePayButton();
             
-            // Update modal title with plan info
-            document.querySelector('.modal-title').textContent = `Pay ${currentPlanName} - Ksh ${amount}`;
+            // Focus management for modals
+            phoneInput.addEventListener('focus', () => {
+                setTimeout(() => {
+                    window.scrollTo(0, phoneModal.offsetTop);
+                }, 300);
+            });
+        });
+
+        // Plan Selection
+        planCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Remove active class from all cards
+                planCards.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to selected card
+                card.classList.add('active');
+                
+                // Update selected plan
+                selectedPlan = {
+                    amount: card.dataset.amount,
+                    name: card.dataset.plan
+                };
+                
+                // Update pay button
+                updatePayButton();
+                
+                // Vibrate on mobile (if supported)
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            });
+        });
+
+        // Pay Button
+        payButton.addEventListener('click', () => {
+            if (!selectedPlan || isProcessing) return;
             
-            // Clear previous input
-            document.getElementById('phoneInput').value = '';
+            // Update modal title
+            modalPlanTitle.textContent = `Pay ${selectedPlan.name} - Ksh ${selectedPlan.amount}`;
             
-            // Show modal
-            document.getElementById('phoneModal').style.display = 'flex';
+            // Show phone modal
+            phoneModal.style.display = 'flex';
+            setTimeout(() => phoneInput.focus(), 300);
+        });
+
+        // Info Toggle
+        infoToggle.addEventListener('click', () => {
+            infoToggle.classList.toggle('active');
+            infoContent.classList.toggle('active');
+        });
+
+        // Modal Functions
+        confirmBtn.addEventListener('click', processPayment);
+        cancelBtn.addEventListener('click', () => phoneModal.style.display = 'none');
+        closeSuccessBtn.addEventListener('click', () => successModal.style.display = 'none');
+
+        // Close modals when clicking outside
+        [phoneModal, successModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Enter key for phone input
+        phoneInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                processPayment();
+            }
+        });
+
+        // Format phone input
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Format as 07XX XXX XXX
+            if (value.length <= 3) {
+                value = value;
+            } else if (value.length <= 6) {
+                value = `${value.slice(0, 3)} ${value.slice(3)}`;
+            } else if (value.length <= 9) {
+                value = `${value.slice(0, 3)} ${value.slice(3, 6)} ${value.slice(6)}`;
+            } else {
+                value = `${value.slice(0, 3)} ${value.slice(3, 6)} ${value.slice(6, 9)} ${value.slice(9, 12)}`;
+            }
+            
+            e.target.value = value;
+        });
+
+        // Update Pay Button
+        function updatePayButton() {
+            if (selectedPlan) {
+                payButton.disabled = false;
+                payButton.innerHTML = `
+                    <i class="fas fa-lock"></i>
+                    <span>Pay Ksh ${selectedPlan.amount}</span>
+                `;
+            } else {
+                payButton.disabled = true;
+                payButton.innerHTML = `
+                    <i class="fas fa-lock"></i>
+                    <span>Select a Plan to Pay</span>
+                `;
+            }
         }
 
-        // Hide modal
-        function hidePhoneModal() {
-            document.getElementById('phoneModal').style.display = 'none';
-        }
-
-        // Toggle description with animation
-        function toggleDescription() {
-            const description = document.getElementById("description");
-            const readMore = document.getElementById("readMore");
-            
-            description.classList.toggle('active');
-            readMore.classList.toggle('active');
-            
-            const isExpanded = description.classList.contains('active');
-            readMore.querySelector('span').innerText = isExpanded ? "Read Less" : "Read More";
-        }
-
-        // Show loading indicator
-        function showLoading() {
-            document.getElementById('loading').style.display = 'block';
-        }
-
-        // Hide loading indicator
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        // Validate phone number
-        function validatePhoneNumber(phone) {
+        // Validate Phone Number
+        function validatePhone(phone) {
             const cleaned = phone.replace(/\D/g, '');
             
-            // Check if it's a valid Safaricom number
             if (cleaned.length === 10 && cleaned.startsWith('07')) {
                 return cleaned;
-            } else if (cleaned.length === 12 && cleaned.startsWith('2547')) {
+            }
+            
+            if (cleaned.length === 12 && cleaned.startsWith('254')) {
                 return cleaned;
-            } else if (cleaned.length === 9 && cleaned.startsWith('7')) {
-                return `0${cleaned}`;
             }
             
             return null;
         }
 
-        // Format phone for display
-        function formatPhone(phone) {
+        // Format Phone for Display
+        function formatPhoneDisplay(phone) {
             const cleaned = phone.replace(/\D/g, '');
             
             if (cleaned.length === 10) {
-                return `0${cleaned.substring(1, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7)}`;
+                return `0${cleaned.slice(1, 4)} ${cleaned.slice(4, 7)} ${cleaned.slice(7)}`;
+            }
+            
+            if (cleaned.length === 12) {
+                return `0${cleaned.slice(3, 6)} ${cleaned.slice(6, 9)} ${cleaned.slice(9)}`;
             }
             
             return phone;
         }
 
-        // Show payment success message
-        function showPaymentSuccess(phone) {
-            const formattedPhone = formatPhone(phone);
-            
-            document.getElementById("payment-status").style.display = "block";
-            document.getElementById("status-message").innerText = "Payment Initiated Successfully!";
-            document.getElementById("instruction-message").innerText = `We have sent an STK push to your phone (${formattedPhone}). Please enter your PIN to complete the ${currentPlanName} purchase.`;
-        }
-
-        // Show payment error
-        function showPaymentError(message) {
-            alert(`❌ ${message}`);
-        }
-
-        // Close payment status message
-        function closeMessage() {
-            document.getElementById("payment-status").style.display = "none";
-        }
-
-        // Process payment
-        function processPayment() {
-            const phoneInput = document.getElementById('phoneInput');
-            const phone = phoneInput.value.trim();
-            
-            const validatedPhone = validatePhoneNumber(phone);
+        // Process Payment
+        async function processPayment() {
+            const phone = phoneInput.value;
+            const validatedPhone = validatePhone(phone);
             
             if (!validatedPhone) {
-                showPaymentError("Invalid phone number. Please enter a valid Safaricom number (e.g., 0712345678)");
+                showError('Please enter a valid Safaricom phone number');
                 phoneInput.focus();
                 return;
             }
             
-            // Hide modal and show loading
-            hidePhoneModal();
-            showLoading();
+            // Show loading state
+            isProcessing = true;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<div class="loading"></div> Processing...';
             
-            // Simulate API call delay
-            setTimeout(() => {
-                hideLoading();
+            try {
+                // Simulate API call
+                await simulatePayment(validatedPhone);
                 
-                // In a real application, you would call your backend API here
-                fetch('/mpesa/stk_push/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCSRFToken()
-                    },
-                    body: JSON.stringify({ 
-                        phone_number: validatedPhone, 
-                        amount: currentAmount 
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        showPaymentSuccess(validatedPhone);
+                // Update success modal
+                successPlanName.textContent = selectedPlan.name;
+                successAmount.textContent = `Ksh ${selectedPlan.amount}`;
+                successPhone.textContent = formatPhoneDisplay(validatedPhone);
+                
+                // Show success modal
+                phoneModal.style.display = 'none';
+                successModal.style.display = 'flex';
+                
+                // Reset form
+                resetForm();
+                
+            } catch (error) {
+                showError(error.message || 'Payment failed. Please try again.');
+            } finally {
+                // Reset loading state
+                isProcessing = false;
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Continue to Pay';
+            }
+        }
+
+        // Simulate Payment API Call
+        function simulatePayment(phone) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate success 90% of the time
+                    if (Math.random() < 0.9) {
+                        resolve({ status: 'success' });
                     } else {
-                        showPaymentError("Failed: " + data.message);
+                        reject(new Error('Network error. Please try again.'));
                     }
-                })
-                .catch(error => {
-                    showPaymentError("An error occurred: " + error);
-                });
-                
-                // For demo purposes only (remove in production):
-                // showPaymentSuccess(validatedPhone);
-                
-            }, 1500);
-        }
-
-        // Get CSRF token for Django
-        function getCSRFToken() {
-            let cookieValue = null;
-            let cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.startsWith('csrftoken=')) {
-                    cookieValue = cookie.substring('csrftoken='.length, cookie.length);
-                    break;
-                }
-            }
-            return cookieValue;
-        }
-
-        // Event listeners for modal
-        document.getElementById('confirmBtn').addEventListener('click', processPayment);
-        document.getElementById('cancelBtn').addEventListener('click', hidePhoneModal);
-        
-        // Allow Enter key to confirm payment
-        document.getElementById('phoneInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                processPayment();
-            }
-        });
-        
-        // Close modal when clicking outside
-        document.getElementById('phoneModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hidePhoneModal();
-            }
-        });
-
-        // Add initial animation to buttons
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.button');
-            buttons.forEach((button, index) => {
-                button.style.animationDelay = `${index * 0.1}s`;
+                }, 2000);
             });
+        }
+
+        // Reset Form
+        function resetForm() {
+            phoneInput.value = '';
+            selectedPlan = null;
+            planCards.forEach(card => card.classList.remove('active'));
+            updatePayButton();
+        }
+
+        // Show Error
+        function showError(message) {
+            // Create error element
+            let errorEl = phoneModal.querySelector('.error-message');
+            if (!errorEl) {
+                errorEl = document.createElement('div');
+                errorEl.className = 'error-message';
+                errorEl.style.color = '#e53e3e';
+                errorEl.style.fontSize = '0.9rem';
+                errorEl.style.marginTop = '8px';
+                errorEl.style.textAlign = 'center';
+                phoneInput.parentNode.appendChild(errorEl);
+            }
+            
+            errorEl.textContent = message;
+            
+            // Highlight input
+            phoneInput.style.borderColor = '#e53e3e';
+            phoneInput.style.boxShadow = '0 0 0 3px rgba(229, 62, 62, 0.1)';
+            
+            // Remove highlight after 3 seconds
+            setTimeout(() => {
+                errorEl.textContent = '';
+                phoneInput.style.borderColor = '#e2e8f0';
+                phoneInput.style.boxShadow = 'none';
+            }, 3000);
+        }
+
+        // Handle back button on modals
+        window.addEventListener('popstate', () => {
+            phoneModal.style.display = 'none';
+            successModal.style.display = 'none';
         });
     </script>
 </body>
