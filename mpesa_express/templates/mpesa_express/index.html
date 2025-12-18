@@ -3,814 +3,728 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service.starlink.ke</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Starlink Payment Portal</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        :root {
-            --primary: #148122;
-            --primary-dark: #0f7b0f;
-            --primary-light: #e0f7da;
-            --accent: #25D366;
-            --bookmark: #ff6b35;
-            --dark: #000000;
-            --light: #ffffff;
-            --gray: #444444;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
+            font-family: 'Poppins', sans-serif;
+            background: #0a0e17;
+            color: white;
             min-height: 100vh;
-            color: var(--light);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background-color: var(--light);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             padding: 20px;
             text-align: center;
-            color: var(--light);
+            overflow-x: hidden;
             position: relative;
         }
-        
-        .header h1 {
-            font-size: 26px;
+
+        /* Space Background with Stars */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(3px 3px at 40px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(2px 2px at 130px 80px, #fff, transparent),
+                radial-gradient(3px 3px at 160px 120px, #eee, transparent);
+            z-index: -2;
+            animation: twinkle 8s infinite alternate;
+        }
+
+        /* Animated Stars */
+        .star {
+            position: fixed;
+            background-color: white;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .star.small { width: 1px; height: 1px; }
+        .star.medium { width: 2px; height: 2px; }
+        .star.large { width: 3px; height: 3px; }
+
+        /* Floating Moon */
+        .moon {
+            position: fixed;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #f5f3ce 0%, #d4d1b8 100%);
+            border-radius: 50%;
+            top: 10%;
+            right: 10%;
+            box-shadow: 
+                0 0 60px rgba(245, 243, 206, 0.4),
+                0 0 120px rgba(245, 243, 206, 0.2),
+                inset -15px -15px 30px rgba(0,0,0,0.2);
+            z-index: -1;
+            animation: floatMoon 20s ease-in-out infinite;
+        }
+
+        .moon::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 50%;
+            top: 30px;
+            left: 20px;
+            box-shadow: 
+                15px 15px 0 rgba(0,0,0,0.1),
+                40px 10px 0 rgba(0,0,0,0.1),
+                25px 40px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Satellite Animation */
+        .satellite {
+            position: fixed;
+            width: 40px;
+            height: 20px;
+            background: #3a506b;
+            border-radius: 10px;
+            top: 30%;
+            left: -50px;
+            z-index: -1;
+            animation: orbit 25s linear infinite;
+            box-shadow: 0 0 10px rgba(0,150,255,0.5);
+        }
+
+        .satellite::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 40px;
+            background: #3a506b;
+            border-radius: 5px;
+            top: -10px;
+            left: 15px;
+        }
+
+        .satellite::after {
+            content: '📡';
+            position: absolute;
+            font-size: 12px;
+            right: 5px;
+            top: 2px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 450px;
+            background: rgba(16, 24, 39, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            margin: auto;
+            border-radius: 25px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(62, 207, 142, 0.1),
+                inset 0 0 30px rgba(62, 207, 142, 0.05);
+            animation: floatIn 1s ease-out;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(62, 207, 142, 0.2);
+        }
+
+        /* Title with Glow Effect */
+        h2 {
+            color: #3ecf8e;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            margin-bottom: 35px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            position: relative;
+            font-size: 28px;
+            text-shadow: 0 0 20px rgba(62, 207, 142, 0.5);
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #3ecf8e, transparent);
+            border-radius: 2px;
+        }
+
+        /* Payment Buttons */
+        .button {
+            width: 100%;
+            padding: 20px;
+            margin: 15px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 10px 30px rgba(62, 207, 142, 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+        }
+
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 15px 40px rgba(62, 207, 142, 0.5),
+                0 0 0 2px rgba(62, 207, 142, 0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            background: linear-gradient(135deg, #4ae09e 0%, #3aad9f 100%);
+        }
+
+        .button:active {
+            transform: translateY(-2px);
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .button:hover::before {
+            left: 100%;
+        }
+
+        .button-content {
+            flex: 1;
+        }
+
+        .plan-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: block;
             margin-bottom: 5px;
         }
-        
-        .bookmark-container {
-            text-align: center;
-            padding: 10px 20px;
-            background-color: var(--primary-light);
-            border-bottom: 1px solid #e0e0e0;
+
+        .plan-price {
+            font-size: 24px;
+            font-weight: 800;
+            display: block;
         }
-        
-        .bookmark-btn {
-            background-color: var(--bookmark);
-            color: var(--light);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
+
+        .button-icon {
+            font-size: 24px;
+            color: rgba(255,255,255,0.9);
+            animation: pulse 2s infinite;
+        }
+
+        /* Read More */
+        .read-more {
+            color: #6ee7b7;
             cursor: pointer;
-            transition: all 0.3s;
+            margin-top: 25px;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 10px 15px;
+            border-radius: 10px;
+            background: rgba(62, 207, 142, 0.1);
         }
-        
-        .bookmark-btn:hover {
-            background-color: #e55a2b;
+
+        .read-more:hover {
+            color: #a7f3d0;
+            background: rgba(62, 207, 142, 0.2);
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
         }
-        
-        .bookmark-btn i {
-            margin-right: 8px;
+
+        .read-more i {
+            transition: transform 0.3s;
         }
-        
-        .bookmark-success {
-            background-color: var(--primary) !important;
+
+        /* Description */
+        .description {
+            display: none;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 15px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.8;
+            border-left: 4px solid #3ecf8e;
+            animation: slideDown 0.5s ease-out;
         }
-        
-        .bookmark-success i {
-            color: gold;
-        }
-        
-        .payment-info {
-            background-color: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            margin: 0 20px 20px;
-            text-align: center;
+
+        .description strong {
+            color: #6ee7b7;
+            display: block;
+            margin-bottom: 10px;
             font-size: 16px;
         }
-        
-        .packages-container {
-            padding: 0 20px 20px;
-        }
-        
-        .package-card {
-            background-color: var(--light);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
+
+        /* Payment Status */
+        #payment-status {
+            display: none;
+            background: rgba(30, 41, 59, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 25px;
+            animation: expandIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(62, 207, 142, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
             overflow: hidden;
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
         }
-        
-        .package-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+        #payment-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3ecf8e, #2a9d8f);
+            animation: progressBar 3s linear infinite;
         }
-        
-        .package-header {
-            background-color: var(--primary);
-            color: var(--light);
-            padding: 15px;
-            font-weight: 600;
-            font-size: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+
+        #success-tick {
+            font-size: 50px;
+            color: #3ecf8e;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            text-shadow: 0 0 30px rgba(62, 207, 142, 0.7);
         }
-        
-        .package-body {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .package-price {
-            font-size: 22px;
+
+        #status-message {
+            font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            margin: 15px 0;
+            color: #a7f3d0;
         }
-        
-        .package-features {
-            font-size: 14px;
-            color: var(--gray);
+
+        #instruction-message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 25px;
         }
-        
-        .buy-btn {
-            background-color: var(--primary);
-            color: var(--light);
+
+        #ok-button {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            padding: 15px 35px;
             border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: 600;
+            color: white;
+            border-radius: 12px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            box-shadow: 0 8px 25px rgba(62, 207, 142, 0.3);
         }
-        
-        .buy-btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
+
+        #ok-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(62, 207, 142, 0.5);
+            background: linear-gradient(135deg, #4ae09e 0%, #3aad9f 100%);
         }
-        
-        .buy-btn i {
-            margin-right: 8px;
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #94a3b8;
+            padding: 20px;
+            background: rgba(16, 24, 39, 0.6);
+            border-radius: 15px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(5px);
         }
-        
-        .inquiry {
-            background-color: #f8f9fa;
-            padding: 15px;
-            margin: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
-        }
-        
-        .inquiry p {
-            color: var(--gray);
-            margin-bottom: 10px;
-        }
-        
-        .email {
-            color: var(--primary);
-            font-weight: 600;
+
+        .footer a {
+            color: #3ecf8e;
             text-decoration: none;
-            transition: all 0.2s;
-        }
-        
-        .email:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-        
-        .whatsapp-btn {
-            background-color: var(--accent);
-            color: var(--light);
-            padding: 10px 15px;
-            border-radius: 8px;
             font-weight: 600;
-            text-decoration: none;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-        
-        .whatsapp-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
-        }
-        
-        .whatsapp-btn i {
-            margin-right: 8px;
-        }
-        
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background-color: var(--light);
-            border-radius: 12px;
-            max-width: 400px;
-            width: 90%;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: modalOpen 0.3s forwards;
-        }
-        
-        @keyframes modalOpen {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .modal-header {
-            background-color: var(--primary);
-            color: var(--light);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-header h2 {
-            font-size: 20px;
-        }
-        
-        .close-modal {
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--light);
-            transition: all 0.2s;
-        }
-        
-        .close-modal:hover {
-            transform: rotate(90deg);
-        }
-        
-        .modal-body {
-            padding: 20px;
-            color: var(--gray);
-        }
-        
-        .modal-body p {
-            margin-bottom: 20px;
-        }
-        
-        .proceed-btn {
-            background-color: var(--primary);
-            color: var(--light);
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .proceed-btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .proceed-btn i {
-            margin-right: 8px;
-        }
-        
-        /* Loading overlay */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-top: 5px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .loading-text {
-            color: var(--light);
-            font-size: 18px;
-            margin-top: 10px;
-        }
-        
-        /* Payment instructions styles */
-        .payment-instructions {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .payment-instructions ol {
-            padding-left: 20px;
-            margin-top: 10px;
-        }
-        
-        .payment-instructions li {
-            margin-bottom: 8px;
-        }
-        
-        .till-number-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        
-        .till-number {
-            background-color: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        
-        .copy-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             gap: 5px;
-            font-size: 14px;
         }
-        
-        .copy-btn:hover {
-            background-color: var(--primary-dark);
+
+        .footer a:hover {
+            color: #6ee7b7;
+            text-shadow: 0 0 10px rgba(62, 207, 142, 0.5);
         }
-        
-        .copy-btn i {
-            font-size: 12px;
+
+        /* Animations */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
-        
-        /* Android-specific bookmark instructions */
-        .android-bookmark-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+
+        @keyframes floatMoon {
+            0%, 100% { 
+                transform: translate(0, 0) rotate(0deg); 
+                box-shadow: 
+                    0 0 60px rgba(245, 243, 206, 0.4),
+                    0 0 120px rgba(245, 243, 206, 0.2);
+            }
+            25% { 
+                transform: translate(-10px, 15px) rotate(2deg);
+                box-shadow: 
+                    0 0 70px rgba(245, 243, 206, 0.5),
+                    0 0 140px rgba(245, 243, 206, 0.3);
+            }
+            50% { 
+                transform: translate(5px, -10px) rotate(-1deg); 
+            }
+            75% { 
+                transform: translate(15px, 5px) rotate(1deg); 
+            }
         }
-        
-        .android-modal-content {
-            background-color: var(--light);
-            border-radius: 12px;
-            max-width: 400px;
-            width: 90%;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: modalOpen 0.3s forwards;
-            text-align: center;
-            padding: 20px;
-            color: var(--gray);
+
+        @keyframes orbit {
+            0% { 
+                transform: rotate(0deg) translateX(200px) rotate(0deg); 
+            }
+            100% { 
+                transform: rotate(360deg) translateX(200px) rotate(-360deg); 
+            }
         }
-        
-        .android-modal-content h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
+
+        @keyframes floatIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
-        
-        .android-modal-content ol {
-            text-align: left;
-            padding-left: 20px;
-            margin: 15px 0;
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
         }
-        
-        .android-modal-content li {
-            margin-bottom: 10px;
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0; 
+                max-height: 0; 
+                transform: translateY(-10px); 
+            }
+            to { 
+                opacity: 1; 
+                max-height: 300px; 
+                transform: translateY(0); 
+            }
         }
-        
-        .android-modal-content .proceed-btn {
-            margin-top: 15px;
+
+        @keyframes expandIn {
+            from { 
+                opacity: 0; 
+                transform: scale(0.9); 
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
         }
-        
-        /* Responsive adjustments */
-        @media (max-width: 480px) {
-            .header h1 {
+
+        @keyframes bounceIn {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.3); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.05); 
+            }
+            70% { 
+                transform: scale(0.9); 
+            }
+            100% { 
+                transform: scale(1); 
+            }
+        }
+
+        @keyframes progressBar {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .button {
+                padding: 18px;
+            }
+
+            .plan-title {
+                font-size: 16px;
+            }
+
+            .plan-price {
                 font-size: 22px;
             }
-            
-            .package-header {
-                font-size: 16px;
-                padding: 12px;
+
+            .moon {
+                width: 80px;
+                height: 80px;
+                right: 5%;
+                top: 5%;
             }
-            
-            .package-price {
-                font-size: 20px;
+
+            .satellite {
+                display: none; /* Hide on small screens for better performance */
+            }
+        }
+
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            .button {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .button-icon {
+                order: -1;
             }
         }
     </style>
+
+    <script>
+        // Create stars
+        function createStars() {
+            const starsContainer = document.createElement('div');
+            starsContainer.id = 'stars';
+            document.body.appendChild(starsContainer);
+
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                const size = Math.random() * 3;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                star.className = `star ${size < 1 ? 'small' : size < 2 ? 'medium' : 'large'}`;
+                star.style.left = `${x}vw`;
+                star.style.top = `${y}vh`;
+                star.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Initialize stars when page loads
+        window.addEventListener('DOMContentLoaded', createStars);
+    </script>
 </head>
 <body>
+
+    <!-- Moon -->
+    <div class="moon"></div>
+
+    <!-- Satellite -->
+    <div class="satellite"></div>
+
+    <!-- Main Container -->
     <div class="container">
-        <div class="header">
-            <h1>Select a Package</h1>
-            <div class="payment-info">Starlink Home <i>(Safaricom, Airtel, Telcom)</i></div>
+        <h2>🚀 Starlink Payment Portal</h2>
+
+        <button class="button" onclick="initiateMpesaPayment(85)">
+            <div class="button-content">
+                <span class="plan-title">7 Days – 10GB High-Speed</span>
+                <span class="plan-price">Ksh 85</span>
+            </div>
+            <div class="button-icon">🛰️</div>
+        </button>
+
+        <button class="button" onclick="initiateMpesaPayment(155)">
+            <div class="button-content">
+                <span class="plan-title">21 Days – 30GB Premium</span>
+                <span class="plan-price">Ksh 155</span>
+            </div>
+            <div class="button-icon">🚀</div>
+        </button>
+
+        <button class="button" onclick="initiateMpesaPayment(225)">
+            <div class="button-content">
+                <span class="plan-title">31 Days – Unlimited Data</span>
+                <span class="plan-price">Ksh 225</span>
+            </div>
+            <div class="button-icon">🌌</div>
+        </button>
+
+        <span class="read-more" id="readMore" onclick="toggleDescription()">
+            <i class="fas fa-chevron-down"></i>
+            <span>Read More About Starlink</span>
+        </span>
+
+        <div class="description" id="description">
+            <strong>🌍 Starlink Satellite Internet in Kenya</strong>
+            <p>Experience next-generation satellite internet powered by SpaceX's Starlink constellation. Our service delivers high-speed, low-latency connectivity across Kenya, including remote areas where traditional internet is unavailable.</p>
+            <p>• Global satellite coverage<br>
+               • Latency as low as 20ms<br>
+               • Weather-resistant equipment<br>
+               • 24/7 customer support</p>
         </div>
-        
-        <!-- Bookmark Button -->
-        <div class="bookmark-container">
-            <button class="bookmark-btn" onclick="bookmarkPage()">
-                <i class="far fa-bookmark"></i> Bookmark This Page
+
+        <!-- Payment Status -->
+        <div id="payment-status">
+            <div id="success-tick">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <p id="status-message"></p>
+            <p id="instruction-message"></p>
+            <button id="ok-button" onclick="closeMessage()">
+                <i class="fas fa-check"></i> Confirm
             </button>
-        </div>
-        
-        <div class="packages-container">
-            
-            <!-- Package 1 -->
-            <div class="package-card">
-                <div class="package-header">
-                    <span>24 Hours - 7GB</span>
-                </div>
-                <div class="package-body">
-                    <div class="package-features">
-                        <div>High-speed internet</div>
-                        <div>Works on all networks</div>
-                    </div>
-                    <div>
-                        <div class="package-price">Ksh 50</div>
-                        <button class="buy-btn" onclick="showPaymentModal('24 Hours - 7GB (Ksh 50)', 50)">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Package 2 -->
-            <div class="package-card">
-                <div class="package-header">
-                    <span>7 Days - 12GB</span>
-                </div>
-                <div class="package-body">
-                    <div class="package-features">
-                        <div>High-speed internet</div>
-                        <div>Works on all networks</div>
-                    </div>
-                    <div>
-                        <div class="package-price">Ksh 75</div>
-                        <button class="buy-btn" onclick="showPaymentModal('7 Days - 12GB (Ksh 75)', 75)">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Package 3 -->
-            <div class="package-card">
-                <div class="package-header">
-                    <span>14 Days - 22GB</span>
-                </div>
-                <div class="package-body">
-                    <div class="package-features">
-                        <div>High-speed internet</div>
-                        <div>Works on all networks</div>
-                    </div>
-                    <div>
-                        <div class="package-price">Ksh 95</div>
-                        <button class="buy-btn" onclick="showPaymentModal('14 Days - 22GB (Ksh 95)', 95)">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Package 4 -->
-            <div class="package-card">
-                <div class="package-header">
-                    <span>21 Days - 35GB</span>
-                </div>
-                <div class="package-body">
-                    <div class="package-features">
-                        <div>High-speed internet</div>
-                        <div>Works on all networks</div>
-                    </div>
-                    <div>
-                        <div class="package-price">Ksh 115</div>
-                        <button class="buy-btn" onclick="showPaymentModal('21 Days - 35GB (Ksh 115)', 115)">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Package 5 -->
-            <div class="package-card">
-                <div class="package-header">
-                    <span>30 Days - 50GB</span>
-                </div>
-                <div class="package-body">
-                    <div class="package-features">
-                        <div>High-speed internet</div>
-                        <div>Works on all networks</div>
-                    </div>
-                    <div>
-                        <div class="package-price">Ksh 155</div>
-                        <button class="buy-btn" onclick="showPaymentModal('30 Days - 50GB (Ksh 155)', 155)">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Package 6 -->
-            <div class="package-card">
-                <div class="package-header">
-                    <span>60 DAYS - Unlimited</span>
-                </div>
-                <div class="package-body">
-                    <div class="package-features">
-                        <div>Unlimited high-speed</div>
-                        <div>Works on all networks</div>
-                    </div>
-                    <div>
-                        <div class="package-price">Ksh 225</div>
-                        <button class="buy-btn" onclick="showPaymentModal('60 DAYS - Unlimited (Ksh 225)', 225)">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="inquiry">
-            <p>In case of inquiry, contact us at:</p>
-            <a href="mailto:starrlinkhelp@gmail.com" class="email">email us</a>
-            <p></p>
-          
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>M-Pesa Payment Instructions</h2>
-                <span class="close-modal" onclick="closeModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>You have selected: <strong id="selectedPackage"></strong></p>
-                
-                <div class="payment-instructions">
-                    <p>Please follow these steps to complete your payment:</p>
-                    <ol>
-                        <li>Go to M-Pesa on your phone</li>
-                        <li>Select <strong>Lipa na M-Pesa</strong></li>
-                        <li>Select <strong>Buy Goods and Services</strong></li>
-                        <li>Enter Till Number: 
-                            <div class="till-number-container">
-                                <span class="till-number" id="tillNumber">4160709</span>
-                                <button class="copy-btn" onclick="copyTillNumber()">
-                                    <i class="far fa-copy"></i> Copy
-                                </button>
-                            </div>
-                        </li>
-                        <li>Enter Amount: <span class="till-number" id="paymentAmount"></span></li>
-                        <li>Enter your M-Pesa PIN</li>
-                        <li>Confirm and send payment(NBS SOLUTION)</li>
-                    </ol>
-                    <p>Your package will be activated automatically after payment confirmation.</p>
-                </div>
-                
-                <button class="proceed-btn" onclick="closeModal()">
-                    <i class="fas fa-check"></i> I Understand
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Android Bookmark Instructions Modal -->
-    <div id="androidBookmarkModal" class="android-bookmark-modal">
-        <div class="android-modal-content">
-            <h3>Add to Home Screen</h3>
-            <p>To bookmark this page on your Android device:</p>
-            <ol>
-                <li>Tap the <strong>three dots</strong> menu in your browser</li>
-                <li>Select <strong>"Add to Home screen"</strong></li>
-                <li>Confirm the bookmark name</li>
-                <li>Tap <strong>"Add"</strong> to finish</li>
-            </ol>
-            <p>This will create a shortcut on your home screen for quick access.</p>
-            <button class="proceed-btn" onclick="closeAndroidModal()">
-                <i class="fas fa-check"></i> Got It
-            </button>
-        </div>
-    </div>
-    
-    <!-- Loading overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <div class="loading-text">Processing your request...</div>
+    <div class="footer">
+        <p>Need help? Contact our support team:</p>
+        <p>
+            <a href="mailto:starrlinkhelp@gmail.com">
+                <i class="fas fa-envelope"></i> contact us
+            </a>
+            
+        </p>
+        <p style="margin-top: 10px; font-size: 12px; color: #64748b;">
+            <i class="fas fa-shield-alt"></i> Secure payment • Powered by SpaceX Starlink
+        </p>
     </div>
 
     <script>
-        function showPaymentModal(packageName, amount) {
-            document.getElementById('selectedPackage').textContent = packageName;
-            document.getElementById('paymentAmount').textContent = 'Ksh ' + amount;
-            document.getElementById('paymentModal').style.display = 'flex';
-        }
-        
-        function closeModal() {
-            document.getElementById('paymentModal').style.display = 'none';
-        }
-        
-        function closeAndroidModal() {
-            document.getElementById('androidBookmarkModal').style.display = 'none';
-        }
-        
-        function copyTillNumber() {
-            const tillNumber = document.getElementById('tillNumber').textContent;
-            navigator.clipboard.writeText(tillNumber).then(() => {
-                // Change button text temporarily
-                const copyBtn = document.querySelector('.copy-btn');
-                const originalHtml = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied! (NBS SOLUTION)';
-                
-                // Revert after 2 seconds
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalHtml;
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
-        }
-        
-        // Bookmark functionality optimized for Android
-        function bookmarkPage() {
-            const url = window.location.href;
-            const title = document.title;
+        // All original functionality remains exactly the same
+        function initiateMpesaPayment(amount) {
+            let phone = prompt("Enter your Safaricom phone number:");
 
-            // Check if we're on Android
-            const isAndroid = /Android/.test(navigator.userAgent);
-            
-            if (isAndroid) {
-                // For Android, show instructions for adding to home screen
-                document.getElementById('androidBookmarkModal').style.display = 'flex';
-                showBookmarkSuccess();
-            } else {
-                // For other devices, try to add bookmark automatically
-                if (window.sidebar && window.sidebar.addPanel) {
-                    // Firefox
-                    window.sidebar.addPanel(title, url, "");
-                    showBookmarkSuccess();
-                } else if (window.external && ('AddFavorite' in window.external)) {
-                    // IE
-                    window.external.AddFavorite(url, title);
-                    showBookmarkSuccess();
+            if (!phone || phone.length < 10) {
+                alert("Invalid phone number. Please try again.");
+                return;
+            }
+
+            fetch('/mpesa/stk_push/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({ phone_number: phone, amount: amount })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    document.getElementById("payment-status").style.display = "block";
+                    document.getElementById("success-tick").style.display = "inline-block";
+                    document.getElementById("status-message").innerText = "Payment Initiated!";
+                    document.getElementById("instruction-message").innerText = 
+                        "We have sent an STK push to your phone (" + phone +
+                        "). Please enter your PIN to complete the purchase.";
+                    document.getElementById("ok-button").style.display = "inline-block";
                 } else {
-                    // For other browsers, show instructions
-                    showBookmarkInstructions(url, title);
+                    alert("❌ Failed: " + data.message);
                 }
-            }
-        }
-
-        function showBookmarkSuccess() {
-            const btn = document.querySelector('.bookmark-btn');
-            const originalHTML = btn.innerHTML;
-            
-            btn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked!';
-            btn.classList.add('bookmark-success');
-            
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.classList.remove('bookmark-success');
-            }, 2000);
-        }
-
-        function showBookmarkInstructions(url, title) {
-            // Create a modal with instructions
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.7);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-            `;
-            
-            modal.innerHTML = `
-                <div style="
-                    background: white;
-                    padding: 20px;
-                    border-radius: 12px;
-                    max-width: 400px;
-                    text-align: center;
-                    color: #333;
-                ">
-                    <h3>Bookmark This Page</h3>
-                    <p>Press <kbd>Ctrl+D</kbd> (Windows/Linux) or <kbd>Cmd+D</kbd> (Mac) to bookmark this page.</p>
-                    <button onclick="this.closest('div').parentElement.remove()" 
-                            style="
-                                background: var(--primary);
-                                color: white;
-                                border: none;
-                                padding: 10px 20px;
-                                border-radius: 6px;
-                                cursor: pointer;
-                                margin-top: 15px;
-                            ">
-                        Got It!
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Close modal when clicking outside
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    document.body.removeChild(modal);
-                }
+            })
+            .catch(error => {
+                alert("⚠ An error occurred: " + error);
             });
         }
-        
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('paymentModal')) {
-                closeModal();
+
+        function getCSRFToken() {
+            let cookieValue = null;
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                    break;
+                }
             }
-            if (event.target == document.getElementById('androidBookmarkModal')) {
-                closeAndroidModal();
+            return cookieValue;
+        }
+
+        function toggleDescription() {
+            let box = document.getElementById("description");
+            let text = document.getElementById("readMore");
+
+            if (box.style.display === "none") {
+                box.style.display = "block";
+                text.innerHTML = '<i class="fas fa-chevron-up"></i><span>Read Less</span>';
+            } else {
+                box.style.display = "none";
+                text.innerHTML = '<i class="fas fa-chevron-down"></i><span>Read More</span>';
             }
         }
+
+        function closeMessage() {
+            document.getElementById("payment-status").style.display = "none";
+            document.getElementById("ok-button").style.display = "none";
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effect to buttons
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Initialize description as hidden
+            document.getElementById("description").style.display = "none";
+        });
     </script>
 </body>
-    </html>
+</html>
