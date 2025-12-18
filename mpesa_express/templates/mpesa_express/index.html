@@ -3,176 +3,814 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment</title>
+    <title>Service.starlink.ke</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #148122;
+            --primary-dark: #0f7b0f;
+            --primary-light: #e0f7da;
+            --accent: #25D366;
+            --bookmark: #ff6b35;
+            --dark: #000000;
+            --light: #ffffff;
+            --gray: #444444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            min-height: 100vh;
+            color: var(--light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-        h2 {
-            color: #33710dd1;
-        }
+        
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-        }
-        .button {
-            display: block;
+            background-color: var(--light);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 100%;
-            margin: 10px 0;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background: #28a745;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
+            max-width: 500px;
+            overflow: hidden;
+            margin: 20px 0;
         }
-        .button:hover {
-            background: #218838;
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 20px;
+            text-align: center;
+            color: var(--light);
+            position: relative;
         }
-        .read-more {
-            color: blue;
-            cursor: pointer;
-            text-decoration: underline;
+        
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 5px;
         }
-        .description {
-            display: none;
-            text-align: left;
-            margin-top: 10px;
+        
+        .bookmark-container {
+            text-align: center;
+            padding: 10px 20px;
+            background-color: var(--primary-light);
+            border-bottom: 1px solid #e0e0e0;
         }
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #666;
-        }
-        #payment-status {
-            display: none;
-            text-align: left;
-            margin-top: 20px;
-        }
-        #success-tick {
-            color: green;
-            font-size: 24px;
-            display: inline-block;
-        }
-        #status-message {
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        #instruction-message {
-            margin-top: 10px;
-        }
-        #ok-button {
-            background-color: #007bff;
-            color: white;
+        
+        .bookmark-btn {
+            background-color: var(--bookmark);
+            color: var(--light);
             border: none;
             padding: 10px 20px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
         }
-        #ok-button:hover {
-            background-color: #0056b3;
+        
+        .bookmark-btn:hover {
+            background-color: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+        }
+        
+        .bookmark-btn i {
+            margin-right: 8px;
+        }
+        
+        .bookmark-success {
+            background-color: var(--primary) !important;
+        }
+        
+        .bookmark-success i {
+            color: gold;
+        }
+        
+        .payment-info {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 0 20px 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .packages-container {
+            padding: 0 20px 20px;
+        }
+        
+        .package-card {
+            background-color: var(--light);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .package-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .package-header {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 15px;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .package-body {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .package-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .package-features {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .buy-btn {
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .buy-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .buy-btn i {
+            margin-right: 8px;
+        }
+        
+        .inquiry {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .inquiry p {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .email {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .email:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .whatsapp-btn {
+            background-color: var(--accent);
+            color: var(--light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
+        }
+        
+        .whatsapp-btn i {
+            margin-right: 8px;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--light);
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalOpen 0.3s forwards;
+        }
+        
+        @keyframes modalOpen {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 20px;
+        }
+        
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--light);
+            transition: all 0.2s;
+        }
+        
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 20px;
+            color: var(--gray);
+        }
+        
+        .modal-body p {
+            margin-bottom: 20px;
+        }
+        
+        .proceed-btn {
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .proceed-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .proceed-btn i {
+            margin-right: 8px;
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: var(--light);
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        
+        /* Payment instructions styles */
+        .payment-instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .payment-instructions ol {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .payment-instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .till-number-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .till-number {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .copy-btn i {
+            font-size: 12px;
+        }
+        
+        /* Android-specific bookmark instructions */
+        .android-bookmark-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .android-modal-content {
+            background-color: var(--light);
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalOpen 0.3s forwards;
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+        }
+        
+        .android-modal-content h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .android-modal-content ol {
+            text-align: left;
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        .android-modal-content li {
+            margin-bottom: 10px;
+        }
+        
+        .android-modal-content .proceed-btn {
+            margin-top: 15px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .package-header {
+                font-size: 16px;
+                padding: 12px;
+            }
+            
+            .package-price {
+                font-size: 20px;
+            }
         }
     </style>
-    <script>
-        function initiateMpesaPayment(amount) {
-            let phone = prompt("Enter your Safaricom phone number:");
-
-            if (!phone || phone.length < 10) {
-                alert("Invalid phone number. Please try again.");
-                return;
-            }
-
-            fetch('/mpesa/stk_push/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()
-                },
-                body: JSON.stringify({ phone_number: phone, amount: amount })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    // Show success message with tick and instructions
-                    document.getElementById("payment-status").style.display = "block";
-                    document.getElementById("success-tick").style.display = "inline-block";
-                    document.getElementById("status-message").innerText = "Success!";
-                    document.getElementById("instruction-message").innerText = "We have sent an STK push to your phone (" + phone + "). Please enter your PIN to complete the bundles purchase.";
-                    document.getElementById("ok-button").style.display = "inline-block"; // Show the OK button
-                } else {
-                    alert("❌ Failed: " + data.message);
-                }
-            })
-            .catch(error => {
-                alert("⚠ An error occurred: " + error);
-            });
-        }
-
-        function getCSRFToken() {
-            let cookieValue = null;
-            let cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.startsWith('csrftoken=')) {
-                    cookieValue = cookie.substring('csrftoken='.length, cookie.length);
-                    break;
-                }
-            }
-            return cookieValue;
-        }
-
-        function toggleDescription() {
-            let description = document.getElementById("description");
-            let readMore = document.getElementById("readMore");
-            if (description.style.display === "none") {
-                description.style.display = "block";
-                readMore.innerText = "Read Less";
-            } else {
-                description.style.display = "none";
-                readMore.innerText = "Read More";
-            }
-        }
-
-        function closeMessage() {
-            document.getElementById("payment-status").style.display = "none";
-            document.getElementById("ok-button").style.display = "none"; // Hide the OK button
-        }
-    </script>
 </head>
 <body>
     <div class="container">
-        <h2>Select Payment Plan</h2>
-        <button class="button" onclick="initiateMpesaPayment(85)">7 Days - 10GB (Ksh 85)</button>
-        <button class="button" onclick="initiateMpesaPayment(155)">21 Days - 30GB (Ksh155)</button>
-        <button class="button" onclick="initiateMpesaPayment(225)">31 Days - Unlimited (Ksh225)</button>
-
-        <p class="read-more" id="readMore" onclick="toggleDescription()">Read More</p>
-        <div class="description" id="description">
-            <p><strong>Starlink Bundles in Kenya:</strong> Starlink has recently introduced affordable high-speed internet options in Kenya, providing reliable satellite-based internet for both urban and rural areas. These bundles allow users to enjoy seamless connectivity for work, entertainment, and business.</p>
+        <div class="header">
+            <h1>Select a Package</h1>
+            <div class="payment-info">Starlink Home <i>(Safaricom, Airtel, Telcom)</i></div>
         </div>
-
-        <!-- Payment status section -->
-        <div id="payment-status">
-            <span id="success-tick">✔</span>
-            <p id="status-message"></p>
-            <p id="instruction-message"></p>
-            <button id="ok-button" onclick="closeMessage()">OK</button>
+        
+        <!-- Bookmark Button -->
+        <div class="bookmark-container">
+            <button class="bookmark-btn" onclick="bookmarkPage()">
+                <i class="far fa-bookmark"></i> Bookmark This Page
+            </button>
+        </div>
+        
+        <div class="packages-container">
+            
+            <!-- Package 1 -->
+            <div class="package-card">
+                <div class="package-header">
+                    <span>24 Hours - 7GB</span>
+                </div>
+                <div class="package-body">
+                    <div class="package-features">
+                        <div>High-speed internet</div>
+                        <div>Works on all networks</div>
+                    </div>
+                    <div>
+                        <div class="package-price">Ksh 50</div>
+                        <button class="buy-btn" onclick="showPaymentModal('24 Hours - 7GB (Ksh 50)', 50)">
+                            <i class="fas fa-shopping-cart"></i> Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Package 2 -->
+            <div class="package-card">
+                <div class="package-header">
+                    <span>7 Days - 12GB</span>
+                </div>
+                <div class="package-body">
+                    <div class="package-features">
+                        <div>High-speed internet</div>
+                        <div>Works on all networks</div>
+                    </div>
+                    <div>
+                        <div class="package-price">Ksh 75</div>
+                        <button class="buy-btn" onclick="showPaymentModal('7 Days - 12GB (Ksh 75)', 75)">
+                            <i class="fas fa-shopping-cart"></i> Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Package 3 -->
+            <div class="package-card">
+                <div class="package-header">
+                    <span>14 Days - 22GB</span>
+                </div>
+                <div class="package-body">
+                    <div class="package-features">
+                        <div>High-speed internet</div>
+                        <div>Works on all networks</div>
+                    </div>
+                    <div>
+                        <div class="package-price">Ksh 95</div>
+                        <button class="buy-btn" onclick="showPaymentModal('14 Days - 22GB (Ksh 95)', 95)">
+                            <i class="fas fa-shopping-cart"></i> Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Package 4 -->
+            <div class="package-card">
+                <div class="package-header">
+                    <span>21 Days - 35GB</span>
+                </div>
+                <div class="package-body">
+                    <div class="package-features">
+                        <div>High-speed internet</div>
+                        <div>Works on all networks</div>
+                    </div>
+                    <div>
+                        <div class="package-price">Ksh 115</div>
+                        <button class="buy-btn" onclick="showPaymentModal('21 Days - 35GB (Ksh 115)', 115)">
+                            <i class="fas fa-shopping-cart"></i> Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Package 5 -->
+            <div class="package-card">
+                <div class="package-header">
+                    <span>30 Days - 50GB</span>
+                </div>
+                <div class="package-body">
+                    <div class="package-features">
+                        <div>High-speed internet</div>
+                        <div>Works on all networks</div>
+                    </div>
+                    <div>
+                        <div class="package-price">Ksh 155</div>
+                        <button class="buy-btn" onclick="showPaymentModal('30 Days - 50GB (Ksh 155)', 155)">
+                            <i class="fas fa-shopping-cart"></i> Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Package 6 -->
+            <div class="package-card">
+                <div class="package-header">
+                    <span>60 DAYS - Unlimited</span>
+                </div>
+                <div class="package-body">
+                    <div class="package-features">
+                        <div>Unlimited high-speed</div>
+                        <div>Works on all networks</div>
+                    </div>
+                    <div>
+                        <div class="package-price">Ksh 225</div>
+                        <button class="buy-btn" onclick="showPaymentModal('60 DAYS - Unlimited (Ksh 225)', 225)">
+                            <i class="fas fa-shopping-cart"></i> Buy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="inquiry">
+            <p>In case of inquiry, contact us at:</p>
+            <a href="mailto:starrlinkhelp@gmail.com" class="email">email us</a>
+            <p></p>
+          
         </div>
     </div>
 
-    <div class="footer">
-        <p>Contact us at: <a href="mailto:Starrlinkhelpgmail.com">contact us</a></p>
+    <!-- Confirmation Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>M-Pesa Payment Instructions</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>You have selected: <strong id="selectedPackage"></strong></p>
+                
+                <div class="payment-instructions">
+                    <p>Please follow these steps to complete your payment:</p>
+                    <ol>
+                        <li>Go to M-Pesa on your phone</li>
+                        <li>Select <strong>Lipa na M-Pesa</strong></li>
+                        <li>Select <strong>Buy Goods and Services</strong></li>
+                        <li>Enter Till Number: 
+                            <div class="till-number-container">
+                                <span class="till-number" id="tillNumber">4160709</span>
+                                <button class="copy-btn" onclick="copyTillNumber()">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </li>
+                        <li>Enter Amount: <span class="till-number" id="paymentAmount"></span></li>
+                        <li>Enter your M-Pesa PIN</li>
+                        <li>Confirm and send payment(NBS SOLUTION)</li>
+                    </ol>
+                    <p>Your package will be activated automatically after payment confirmation.</p>
+                </div>
+                
+                <button class="proceed-btn" onclick="closeModal()">
+                    <i class="fas fa-check"></i> I Understand
+                </button>
+            </div>
+        </div>
     </div>
+    
+    <!-- Android Bookmark Instructions Modal -->
+    <div id="androidBookmarkModal" class="android-bookmark-modal">
+        <div class="android-modal-content">
+            <h3>Add to Home Screen</h3>
+            <p>To bookmark this page on your Android device:</p>
+            <ol>
+                <li>Tap the <strong>three dots</strong> menu in your browser</li>
+                <li>Select <strong>"Add to Home screen"</strong></li>
+                <li>Confirm the bookmark name</li>
+                <li>Tap <strong>"Add"</strong> to finish</li>
+            </ol>
+            <p>This will create a shortcut on your home screen for quick access.</p>
+            <button class="proceed-btn" onclick="closeAndroidModal()">
+                <i class="fas fa-check"></i> Got It
+            </button>
+        </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Processing your request...</div>
+    </div>
+
+    <script>
+        function showPaymentModal(packageName, amount) {
+            document.getElementById('selectedPackage').textContent = packageName;
+            document.getElementById('paymentAmount').textContent = 'Ksh ' + amount;
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+        
+        function closeAndroidModal() {
+            document.getElementById('androidBookmarkModal').style.display = 'none';
+        }
+        
+        function copyTillNumber() {
+            const tillNumber = document.getElementById('tillNumber').textContent;
+            navigator.clipboard.writeText(tillNumber).then(() => {
+                // Change button text temporarily
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalHtml = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied! (NBS SOLUTION)';
+                
+                // Revert after 2 seconds
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHtml;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+        
+        // Bookmark functionality optimized for Android
+        function bookmarkPage() {
+            const url = window.location.href;
+            const title = document.title;
+
+            // Check if we're on Android
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            if (isAndroid) {
+                // For Android, show instructions for adding to home screen
+                document.getElementById('androidBookmarkModal').style.display = 'flex';
+                showBookmarkSuccess();
+            } else {
+                // For other devices, try to add bookmark automatically
+                if (window.sidebar && window.sidebar.addPanel) {
+                    // Firefox
+                    window.sidebar.addPanel(title, url, "");
+                    showBookmarkSuccess();
+                } else if (window.external && ('AddFavorite' in window.external)) {
+                    // IE
+                    window.external.AddFavorite(url, title);
+                    showBookmarkSuccess();
+                } else {
+                    // For other browsers, show instructions
+                    showBookmarkInstructions(url, title);
+                }
+            }
+        }
+
+        function showBookmarkSuccess() {
+            const btn = document.querySelector('.bookmark-btn');
+            const originalHTML = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked!';
+            btn.classList.add('bookmark-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('bookmark-success');
+            }, 2000);
+        }
+
+        function showBookmarkInstructions(url, title) {
+            // Create a modal with instructions
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 20px;
+                    border-radius: 12px;
+                    max-width: 400px;
+                    text-align: center;
+                    color: #333;
+                ">
+                    <h3>Bookmark This Page</h3>
+                    <p>Press <kbd>Ctrl+D</kbd> (Windows/Linux) or <kbd>Cmd+D</kbd> (Mac) to bookmark this page.</p>
+                    <button onclick="this.closest('div').parentElement.remove()" 
+                            style="
+                                background: var(--primary);
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                margin-top: 15px;
+                            ">
+                        Got It!
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('paymentModal')) {
+                closeModal();
+            }
+            if (event.target == document.getElementById('androidBookmarkModal')) {
+                closeAndroidModal();
+            }
+        }
+    </script>
 </body>
-</html>
+    </html>
