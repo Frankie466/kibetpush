@@ -726,6 +726,9 @@
             createComets();
             // Show data packages by default
             showPackages('data');
+            
+            // Initialize description as hidden
+            document.getElementById("description").style.display = "none";
         });
     </script>
 </head>
@@ -857,104 +860,104 @@
                 </div>
             </div>
 
-            <!-- Monthly Plans -->
+            <!-- Monthly Plans (Updated Prices: 800-1500) -->
             <div class="packages-grid" id="monthly-packages" style="display: none;">
                 <div class="package-card">
                     <div class="package-icon">🌙</div>
-                    <div class="package-name">Night Owl</div>
+                    <div class="package-name">Basic Monthly</div>
                     <div class="package-duration">MONTHLY</div>
                     <div class="package-features">
-                        <div class="feature"><i class="fas fa-moon"></i> Unlimited 8PM - 6AM</div>
-                        <div class="feature"><i class="fas fa-bolt"></i> 20GB Daytime Data</div>
-                        <div class="feature"><i class="fas fa-gamepad"></i> Gaming Priority</div>
-                        <div class="feature"><i class="fas fa-wifi"></i> Up to 150 Mbps</div>
+                        <div class="feature"><i class="fas fa-bolt"></i> 50GB High-Speed Data</div>
+                        <div class="feature"><i class="fas fa-users"></i> 3 Devices Support</div>
+                        <div class="feature"><i class="fas fa-video"></i> HD Streaming</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 100 Mbps</div>
                     </div>
-                    <div class="package-price">Ksh 1,200<span>/month</span></div>
-                    <button class="select-btn" onclick="initiateMpesaPayment(1200, 'Night Owl Monthly Plan')">
-                        <i class="fas fa-moon"></i> SELECT PLAN
+                    <div class="package-price">Ksh 800<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(800, 'Basic Monthly Plan (50GB)')">
+                        <i class="fas fa-rocket"></i> SELECT PLAN
                     </button>
                 </div>
 
                 <div class="package-card popular">
                     <div class="package-icon">☀️</div>
-                    <div class="package-name">Day Pro</div>
+                    <div class="package-name">Standard Monthly</div>
                     <div class="package-duration">MONTHLY</div>
                     <div class="package-features">
-                        <div class="feature"><i class="fas fa-sun"></i> 100GB Daytime Data</div>
-                        <div class="feature"><i class="fas fa-briefcase"></i> Business Priority</div>
-                        <div class="feature"><i class="fas fa-video"></i> 4K Video Streaming</div>
-                        <div class="feature"><i class="fas fa-wifi"></i> Up to 250 Mbps</div>
+                        <div class="feature"><i class="fas fa-bolt"></i> 100GB High-Speed Data</div>
+                        <div class="feature"><i class="fas fa-users"></i> 5 Devices Support</div>
+                        <div class="feature"><i class="fas fa-video"></i> 4K Streaming</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 200 Mbps</div>
                     </div>
-                    <div class="package-price">Ksh 2,500<span>/month</span></div>
-                    <button class="select-btn" onclick="initiateMpesaPayment(2500, 'Day Pro Monthly Plan')">
+                    <div class="package-price">Ksh 1,200<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(1200, 'Standard Monthly Plan (100GB)')">
                         <i class="fas fa-crown"></i> SELECT POPULAR
                     </button>
                 </div>
 
                 <div class="package-card">
                     <div class="package-icon">🏠</div>
-                    <div class="package-name">Family Plus</div>
+                    <div class="package-name">Premium Monthly</div>
                     <div class="package-duration">MONTHLY</div>
                     <div class="package-features">
+                        <div class="feature"><i class="fas fa-infinity"></i> Unlimited Data</div>
                         <div class="feature"><i class="fas fa-users"></i> 8 Devices Support</div>
-                        <div class="feature"><i class="fas fa-infinity"></i> Unlimited Evenings</div>
-                        <div class="feature"><i class="fas fa-shield-alt"></i> Parental Controls</div>
+                        <div class="feature"><i class="fas fa-gamepad"></i> Gaming Priority</div>
                         <div class="feature"><i class="fas fa-wifi"></i> Up to 300 Mbps</div>
                     </div>
-                    <div class="package-price">Ksh 3,500<span>/month</span></div>
-                    <button class="select-btn" onclick="initiateMpesaPayment(3500, 'Family Plus Monthly Plan')">
-                        <i class="fas fa-home"></i> FOR FAMILY
+                    <div class="package-price">Ksh 1,500<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(1500, 'Premium Monthly Plan (Unlimited)')">
+                        <i class="fas fa-star"></i> GO PREMIUM
                     </button>
                 </div>
             </div>
 
-            <!-- Business Plans -->
+            <!-- Business Plans (Updated Prices: 1500-5000) -->
             <div class="packages-grid" id="business-packages" style="display: none;">
                 <div class="package-card">
                     <div class="package-icon">🏢</div>
-                    <div class="package-name">Startup Pro</div>
+                    <div class="package-name">Small Business</div>
                     <div class="package-duration">MONTHLY</div>
                     <div class="package-features">
-                        <div class="feature"><i class="fas fa-bolt"></i> 200GB Data</div>
-                        <div class="feature"><i class="fas fa-users"></i> 15 Devices</div>
+                        <div class="feature"><i class="fas fa-bolt"></i> 150GB Data</div>
+                        <div class="feature"><i class="fas fa-users"></i> 10 Devices</div>
                         <div class="feature"><i class="fas fa-headset"></i> Business Support</div>
-                        <div class="feature"><i class="fas fa-wifi"></i> Up to 500 Mbps</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 250 Mbps</div>
                     </div>
-                    <div class="package-price">Ksh 5,000<span>/month</span></div>
-                    <button class="select-btn" onclick="initiateMpesaPayment(5000, 'Startup Pro Business Plan')">
-                        <i class="fas fa-briefcase"></i> FOR STARTUPS
+                    <div class="package-price">Ksh 1,500<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(1500, 'Small Business Plan (150GB)')">
+                        <i class="fas fa-briefcase"></i> FOR SMALL BUSINESS
                     </button>
                 </div>
 
                 <div class="package-card popular">
                     <div class="package-icon">🏭</div>
-                    <div class="package-name">Enterprise Plus</div>
+                    <div class="package-name">Medium Business</div>
                     <div class="package-duration">MONTHLY</div>
                     <div class="package-features">
-                        <div class="feature"><i class="fas fa-infinity"></i> Unlimited Data</div>
-                        <div class="feature"><i class="fas fa-server"></i> 50 Devices</div>
+                        <div class="feature"><i class="fas fa-bolt"></i> 300GB Data</div>
+                        <div class="feature"><i class="fas fa-users"></i> 20 Devices</div>
                         <div class="feature"><i class="fas fa-shield-alt"></i> Advanced Security</div>
-                        <div class="feature"><i class="fas fa-wifi"></i> Up to 1 Gbps</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 500 Mbps</div>
                     </div>
-                    <div class="package-price">Ksh 12,000<span>/month</span></div>
-                    <button class="select-btn" onclick="initiateMpesaPayment(12000, 'Enterprise Plus Business Plan')">
-                        <i class="fas fa-crown"></i> FOR ENTERPRISE
+                    <div class="package-price">Ksh 3,000<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(3000, 'Medium Business Plan (300GB)')">
+                        <i class="fas fa-crown"></i> SELECT POPULAR
                     </button>
                 </div>
 
                 <div class="package-card">
                     <div class="package-icon">🌍</div>
-                    <div class="package-name">Global Business</div>
+                    <div class="package-name">Enterprise Business</div>
                     <div class="package-duration">MONTHLY</div>
                     <div class="package-features">
-                        <div class="feature"><i class="fas fa-globe"></i> Global Roaming</div>
-                        <div class="feature"><i class="fas fa-satellite"></i> 99.9% Uptime SLA</div>
+                        <div class="feature"><i class="fas fa-infinity"></i> Unlimited Data</div>
+                        <div class="feature"><i class="fas fa-server"></i> 30+ Devices</div>
                         <div class="feature"><i class="fas fa-headset"></i> 24/7 Dedicated Support</div>
-                        <div class="feature"><i class="fas fa-wifi"></i> Up to 2 Gbps</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 1 Gbps</div>
                     </div>
-                    <div class="package-price">Ksh 25,000<span>/month</span></div>
-                    <button class="select-btn" onclick="initiateMpesaPayment(25000, 'Global Business Plan')">
-                        <i class="fas fa-globe-americas"></i> GLOBAL PLAN
+                    <div class="package-price">Ksh 5,000<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(5000, 'Enterprise Business Plan (Unlimited)')">
+                        <i class="fas fa-globe-americas"></i> ENTERPRISE PLAN
                     </button>
                 </div>
             </div>
@@ -1026,7 +1029,14 @@
             document.querySelectorAll('.toggle-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            
+            // Find the clicked button and activate it
+            const buttons = document.querySelectorAll('.toggle-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent.includes(category.charAt(0).toUpperCase() + category.slice(1))) {
+                    btn.classList.add('active');
+                }
+            });
             
             // Show selected category
             document.getElementById('data-packages').style.display = 'none';
@@ -1077,7 +1087,7 @@
                         `We've sent an M-Pesa STK push to ${phone} for ${packageName}. 
                         Please enter your M-Pesa PIN on your phone to complete the payment of Ksh ${amount}.`;
                     
-                    // Store in session for pending page
+                    // Store in sessionStorage for pending page
                     sessionStorage.setItem('payment_phone', phone);
                     sessionStorage.setItem('payment_amount', amount);
                     sessionStorage.setItem('payment_package', packageName);
@@ -1087,7 +1097,9 @@
                         if (data.redirect_url) {
                             window.location.href = data.redirect_url;
                         } else {
-                            window.location.href = "/payment/pending/";
+                            // Create redirect URL with parameters
+                            const redirectUrl = `/payment/pending/?phone=${encodeURIComponent(phone)}&amount=${amount}&package=${encodeURIComponent(packageName)}&checkout_id=${data.checkout_request_id || ''}`;
+                            window.location.href = redirectUrl;
                         }
                     }, 3000);
                     
@@ -1125,6 +1137,8 @@
             if (box.style.display === "none" || !box.style.display) {
                 box.style.display = "block";
                 text.innerHTML = '<i class="fas fa-chevron-up"></i><span>Read Less</span>';
+                // Smooth scroll to description
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } else {
                 box.style.display = "none";
                 text.innerHTML = '<i class="fas fa-chevron-down"></i><span>Read More</span>';
@@ -1134,7 +1148,17 @@
         // Close payment message
         function closeMessage() {
             document.getElementById("payment-status").style.display = "none";
-            window.location.href = "/payment/pending/";
+            // Get phone and package from sessionStorage for redirect
+            const phone = sessionStorage.getItem('payment_phone') || '';
+            const amount = sessionStorage.getItem('payment_amount') || '';
+            const packageName = sessionStorage.getItem('payment_package') || '';
+            
+            if (phone && amount) {
+                const redirectUrl = `/payment/pending/?phone=${encodeURIComponent(phone)}&amount=${amount}&package=${encodeURIComponent(packageName)}`;
+                window.location.href = redirectUrl;
+            } else {
+                window.location.href = "/payment/pending/";
+            }
         }
 
         // Add interactive effects
@@ -1150,8 +1174,31 @@
                 });
             });
 
-            // Initialize description as hidden
-            document.getElementById("description").style.display = "none";
+            // Toggle button hover effects
+            const toggleButtons = document.querySelectorAll('.toggle-btn');
+            toggleButtons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.backgroundColor = 'rgba(62, 207, 142, 0.1)';
+                    }
+                });
+                btn.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.backgroundColor = 'transparent';
+                    }
+                });
+            });
+
+            // Read more button hover effect
+            const readMoreBtn = document.getElementById('readMore');
+            if (readMoreBtn) {
+                readMoreBtn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                readMoreBtn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            }
         });
     </script>
 </body>

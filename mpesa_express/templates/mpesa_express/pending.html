@@ -23,14 +23,11 @@
             background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
             color: white;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
             text-align: center;
-            overflow: hidden;
             position: relative;
+            overflow-x: hidden;
+            /* REMOVED: overflow: hidden; */
         }
 
         /* Animated background */
@@ -49,7 +46,7 @@
             animation: twinkle 5s infinite alternate;
         }
 
-        /* Satellite animation */
+        /* Satellite animation - Fixed position */
         .satellite {
             position: fixed;
             width: 40px;
@@ -96,7 +93,10 @@
             position: relative;
             z-index: 1;
             border: 1px solid rgba(62, 207, 142, 0.25);
-            margin: 20px;
+            margin: 20px auto;
+            /* ADDED: Allow container to grow */
+            min-height: auto;
+            overflow: visible;
         }
 
         .header {
@@ -351,6 +351,18 @@
 
         .button.secondary:hover {
             background: rgba(62, 207, 142, 0.2);
+            border-color: rgba(62, 207, 142, 0.5);
+        }
+
+        .button.explore {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            animation: pulse 2s infinite;
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        .button.explore:hover {
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.6);
         }
 
         /* Success/Error Messages */
@@ -388,6 +400,8 @@
             background: rgba(16, 24, 39, 0.7);
             border-radius: 20px;
             max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(62, 207, 142, 0.15);
         }
@@ -399,6 +413,25 @@
             gap: 10px;
             margin-top: 15px;
             font-size: 13px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(16, 24, 39, 0.8);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #4ae09e 0%, #3aad9f 100%);
         }
 
         /* Animations */
@@ -429,7 +462,7 @@
 
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.9; }
         }
 
         @keyframes spin {
@@ -457,9 +490,14 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                overflow-x: hidden;
+            }
+
             .container {
                 padding: 30px 20px;
-                margin: 10px;
+                margin: 10px auto;
                 max-width: 95%;
             }
 
@@ -488,6 +526,11 @@
             .satellite {
                 display: none;
             }
+
+            .footer {
+                margin-top: 20px;
+                padding: 20px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -505,6 +548,23 @@
 
             .amount {
                 font-size: 28px;
+            }
+            
+            .button {
+                padding: 14px 25px;
+                font-size: 15px;
+            }
+            
+            .footer {
+                padding: 15px;
+                font-size: 13px;
+            }
+        }
+        
+        /* For very tall content */
+        @media (min-height: 800px) {
+            .container {
+                margin: 40px auto;
             }
         }
     </style>
@@ -663,8 +723,13 @@
 
         <!-- Action Buttons -->
         <div class="button-group">
+            <!-- NEW: Explore Packages Button -->
+            <button class="button explore" onclick="explorePackages()" id="explore-packages-btn">
+                <i class="fas fa-compass"></i> Explore More Packages
+            </button>
+            
             <a href="/" class="button secondary">
-                <i class="fas fa-arrow-left"></i> Back to Packages
+                <i class="fas fa-arrow-left"></i> Back to Home
             </a>
             
             <button class="button" onclick="checkPaymentStatus()" id="check-status-btn">
@@ -757,9 +822,38 @@
         countdownInterval = setInterval(updateCountdown, 1000);
         updateCountdown(); // Initial call
         
+        // Function to explore packages (returns to main page)
+        function explorePackages() {
+            console.log("Explore packages clicked");
+            
+            // Show loading state
+            const exploreBtn = document.getElementById('explore-packages-btn');
+            if (exploreBtn) {
+                const originalText = exploreBtn.innerHTML;
+                exploreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                exploreBtn.disabled = true;
+            }
+            
+            // Clear any pending payment data from localStorage
+            localStorage.removeItem('last_payment_phone');
+            localStorage.removeItem('last_payment_amount');
+            localStorage.removeItem('last_payment_package');
+            localStorage.removeItem('last_checkout_id');
+            
+            // Show confirmation message
+            showMessage("Redirecting to packages page...", "info");
+            
+            // Redirect after a short delay for better UX
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1000);
+        }
+        
         // Function to check payment status
         function checkPaymentStatus() {
             const checkBtn = document.getElementById('check-status-btn');
+            if (!checkBtn) return;
+            
             const originalText = checkBtn.innerHTML;
             
             // Show loading on button
@@ -801,9 +895,21 @@
             });
             
             // Show success message
-            document.getElementById('success-message').style.display = 'block';
-            document.getElementById('countdown').style.display = 'none';
-            document.querySelector('.countdown-label').textContent = 'Payment Confirmed!';
+            const successMsg = document.getElementById('success-message');
+            if (successMsg) {
+                successMsg.style.display = 'block';
+                // Scroll to success message
+                successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            if (countdownElement) {
+                countdownElement.style.display = 'none';
+            }
+            
+            const countdownLabel = document.querySelector('.countdown-label');
+            if (countdownLabel) {
+                countdownLabel.textContent = 'Payment Confirmed!';
+            }
             
             // Update page title
             document.title = "Payment Successful - Starlink Kenya";
@@ -812,10 +918,6 @@
             if (navigator.vibrate) {
                 navigator.vibrate([100, 50, 100]);
             }
-            
-            // Play success sound (optional)
-            // const audio = new Audio('/static/sounds/success.mp3');
-            // audio.play();
             
             // Clear localStorage
             localStorage.removeItem('last_payment_phone');
@@ -828,8 +930,17 @@
         function showError(message) {
             clearInterval(countdownInterval);
             
-            document.getElementById('error-details').textContent = message;
-            document.getElementById('error-message').style.display = 'block';
+            const errorDetails = document.getElementById('error-details');
+            if (errorDetails) {
+                errorDetails.textContent = message;
+            }
+            
+            const errorMsg = document.getElementById('error-message');
+            if (errorMsg) {
+                errorMsg.style.display = 'block';
+                // Scroll to error message
+                errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             
             // Update page title
             document.title = "Payment Failed - Starlink Kenya";
@@ -846,7 +957,7 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
             messageDiv.innerHTML = `
-                <p>${message}</p>
+                <p style="font-size: 16px; margin: 0;">${message}</p>
             `;
             messageDiv.style.position = 'fixed';
             messageDiv.style.bottom = '20px';
@@ -856,12 +967,20 @@
             messageDiv.style.padding = '15px 25px';
             messageDiv.style.borderRadius = '10px';
             messageDiv.style.background = type === 'info' ? 'rgba(59, 130, 246, 0.9)' : 'rgba(34, 197, 94, 0.9)';
+            messageDiv.style.color = 'white';
+            messageDiv.style.fontWeight = '500';
+            messageDiv.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.3)';
+            messageDiv.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+            messageDiv.style.minWidth = '300px';
+            messageDiv.style.textAlign = 'center';
             
             document.body.appendChild(messageDiv);
             
             // Remove after 3 seconds
             setTimeout(() => {
-                messageDiv.remove();
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
             }, 3000);
         }
         
@@ -873,16 +992,21 @@
             }
         });
         
-        // Simulate payment completion after 2-3 minutes (for demo)
-        // Remove this in production!
-        setTimeout(() => {
-            if (timeLeft > 120 && Math.random() > 0.5) {
-                showSuccess();
-            }
-        }, 120000); // After 2 minutes
-        
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            console.log("Page loaded, Explore Packages button should be visible");
+            
+            // Make sure explore button is visible
+            const exploreBtn = document.getElementById('explore-packages-btn');
+            if (exploreBtn) {
+                exploreBtn.style.display = 'inline-flex';
+                exploreBtn.style.visibility = 'visible';
+                exploreBtn.style.opacity = '1';
+                console.log("Explore button found and made visible");
+            } else {
+                console.log("Explore button NOT found!");
+            }
+            
             // Update transaction ID in instructions
             const instructionItems = document.querySelectorAll('.instructions li');
             if (instructionItems.length > 3 && checkoutId) {
@@ -894,6 +1018,25 @@
             
             // Start auto-check after 30 seconds
             setTimeout(checkPaymentStatus, 30000);
+            
+            // Add hover effect to explore packages button
+            if (exploreBtn) {
+                exploreBtn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.02)';
+                });
+                exploreBtn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            }
+            
+            // Enable scrolling by removing any overflow restrictions
+            document.body.style.overflow = 'auto';
+            document.documentElement.style.overflow = 'auto';
+            
+            // Add a scroll indicator if content is tall
+            if (document.body.scrollHeight > window.innerHeight) {
+                console.log("Page is scrollable - content height:", document.body.scrollHeight, "Window height:", window.innerHeight);
+            }
         });
     </script>
 </body>
