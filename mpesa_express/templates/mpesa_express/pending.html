@@ -1,46 +1,900 @@
 <!DOCTYPE html>
+<!-- pending.html -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Pending</title>
+    <title>Payment Processing - Starlink Kenya</title>
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-        .success {
-            font-size: 24px;
-            color: green;
-            font-weight: bold;
-        }
-        .tick {
-            font-size: 50px;
-            color: green;
-        }
-        .message {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: green;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
             color: white;
-            text-decoration: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 20px 30px, #3ecf8e, transparent),
+                radial-gradient(3px 3px at 40px 70px, #3ecf8e, transparent),
+                radial-gradient(1px 1px at 90px 40px, #3ecf8e, transparent);
+            z-index: -2;
+            animation: twinkle 5s infinite alternate;
+        }
+
+        /* Satellite animation */
+        .satellite {
+            position: fixed;
+            width: 40px;
+            height: 20px;
+            background: #3a506b;
+            border-radius: 10px;
+            top: 20%;
+            left: -50px;
+            z-index: -1;
+            animation: orbit 25s linear infinite;
+            box-shadow: 0 0 10px rgba(62, 207, 142, 0.5);
+        }
+
+        .satellite::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 40px;
+            background: #3a506b;
             border-radius: 5px;
+            top: -10px;
+            left: 15px;
+        }
+
+        .satellite::after {
+            content: '📡';
+            position: absolute;
+            font-size: 12px;
+            right: 5px;
+            top: 2px;
+        }
+
+        .container {
+            max-width: 600px;
+            background: rgba(16, 24, 39, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 50px 40px;
+            border-radius: 30px;
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(62, 207, 142, 0.15),
+                inset 0 0 40px rgba(62, 207, 142, 0.08);
+            animation: floatIn 1s ease-out;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(62, 207, 142, 0.25);
+            margin: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .header-icon {
+            font-size: 50px;
+            color: #3ecf8e;
+            animation: pulse 3s infinite;
+        }
+
+        h1 {
+            color: #3ecf8e;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            font-size: 36px;
+            text-shadow: 0 0 25px rgba(62, 207, 142, 0.7);
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 18px;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+        }
+
+        /* Spinner */
+        .spinner-container {
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border: 5px solid rgba(62, 207, 142, 0.2);
+            border-top: 5px solid #3ecf8e;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1.5s linear infinite;
+            position: relative;
+        }
+
+        .spinner-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: #3ecf8e;
+        }
+
+        /* Payment Details */
+        .payment-details {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(16, 24, 39, 0.9));
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid rgba(62, 207, 142, 0.15);
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(62, 207, 142, 0.1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            color: #94a3b8;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-value {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .phone-number {
+            color: #3ecf8e;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .amount {
+            color: #3ecf8e;
+            font-size: 32px;
+            font-weight: 800;
+            text-shadow: 0 0 20px rgba(62, 207, 142, 0.5);
+        }
+
+        /* Status Indicators */
+        .status-container {
+            margin: 30px 0;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            border-left: 4px solid rgba(62, 207, 142, 0.3);
+            transition: all 0.3s;
+        }
+
+        .status-item.active {
+            border-left-color: #3ecf8e;
+            background: rgba(62, 207, 142, 0.1);
+        }
+
+        .status-icon {
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(62, 207, 142, 0.1);
+            border-radius: 50%;
+            color: #3ecf8e;
+        }
+
+        .status-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .status-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .status-description {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Countdown */
+        .countdown-container {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(62, 207, 142, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(62, 207, 142, 0.3);
+        }
+
+        .countdown-label {
+            color: #94a3b8;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .countdown {
+            font-size: 48px;
+            font-weight: 800;
+            color: #3ecf8e;
+            text-shadow: 0 0 30px rgba(62, 207, 142, 0.7);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+        }
+
+        /* Instructions */
+        .instructions {
+            background: rgba(30, 41, 59, 0.9);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            border-left: 5px solid #3ecf8e;
+        }
+
+        .instructions h3 {
+            color: #6ee7b7;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .instructions li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 200px;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(62, 207, 142, 0.6);
+        }
+
+        .button.secondary {
+            background: rgba(62, 207, 142, 0.1);
+            border: 2px solid rgba(62, 207, 142, 0.3);
+        }
+
+        .button.secondary:hover {
+            background: rgba(62, 207, 142, 0.2);
+        }
+
+        /* Success/Error Messages */
+        .message {
+            display: none;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .message.success {
+            background: rgba(62, 207, 142, 0.1);
+            border: 2px solid rgba(62, 207, 142, 0.3);
+            color: #a7f3d0;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .message-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #94a3b8;
+            padding: 25px;
+            background: rgba(16, 24, 39, 0.7);
+            border-radius: 20px;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(62, 207, 142, 0.15);
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        /* Animations */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes orbit {
+            0% { 
+                transform: rotate(0deg) translateX(200px) rotate(0deg); 
+            }
+            100% { 
+                transform: rotate(360deg) translateX(200px) rotate(-360deg); 
+            }
+        }
+
+        @keyframes floatIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(40px) scale(0.9); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0; 
+                max-height: 0; 
+                transform: translateY(-15px); 
+            }
+            to { 
+                opacity: 1; 
+                max-height: 500px; 
+                transform: translateY(0); 
+            }
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+                max-width: 95%;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .countdown {
+                font-size: 36px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button {
+                min-width: 100%;
+            }
+
+            .satellite {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .amount {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="tick">✔</div>
-    <div class="success">STK Push Sent</div>
-    <div class="message">
-        We have sent an STK push to your phone number <strong>{{ phone_number }}</strong>.<br>
-        Please enter your PIN to complete the facilitation fee payment.
+
+    <!-- Satellite -->
+    <div class="satellite"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">🛰️</div>
+            <div>
+                <h1>Payment Processing</h1>
+                <p class="subtitle">Starlink Kenya - High-Speed Satellite Internet</p>
+            </div>
+        </div>
+
+        <!-- Spinner -->
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <div class="spinner-inner">
+                <i class="fas fa-satellite"></i>
+            </div>
+        </div>
+
+        <!-- Payment Details -->
+        <div class="payment-details">
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Phone Number</span>
+                </div>
+                <div class="detail-value phone-number">{{ phone_number }}</div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-wifi"></i>
+                    <span>Package</span>
+                </div>
+                <div class="detail-value">{{ package_name }}</div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Amount</span>
+                </div>
+                <div class="detail-value amount">Ksh {{ amount }}</div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Transaction ID</span>
+                </div>
+                <div class="detail-value" id="transaction-id">{{ checkout_id|default:"Pending..." }}</div>
+            </div>
+        </div>
+
+        <!-- Status Indicators -->
+        <div class="status-container">
+            <div class="status-item active" id="status-initiated">
+                <div class="status-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <div class="status-text">
+                    <div class="status-title">STK Push Sent</div>
+                    <div class="status-description">Payment request sent to your phone</div>
+                </div>
+            </div>
+            
+            <div class="status-item" id="status-pending">
+                <div class="status-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="status-text">
+                    <div class="status-title">Waiting for PIN</div>
+                    <div class="status-description">Enter your M-Pesa PIN on your phone</div>
+                </div>
+            </div>
+            
+            <div class="status-item" id="status-processing">
+                <div class="status-icon">
+                    <i class="fas fa-cog fa-spin"></i>
+                </div>
+                <div class="status-text">
+                    <div class="status-title">Processing Payment</div>
+                    <div class="status-description">Verifying your transaction</div>
+                </div>
+            </div>
+            
+            <div class="status-item" id="status-completed">
+                <div class="status-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="status-text">
+                    <div class="status-title">Payment Confirmed</div>
+                    <div class="status-description">Service will activate automatically</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="countdown-container">
+            <div class="countdown-label">
+                <i class="fas fa-clock"></i>
+                Waiting for payment confirmation
+            </div>
+            <div class="countdown" id="countdown">05:00</div>
+            <div style="margin-top: 10px; font-size: 14px; color: #94a3b8;">
+                Payments typically confirm within 1-2 minutes
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> What to do next:</h3>
+            <ol>
+                <li><strong>Check your phone</strong> - You should receive an M-Pesa prompt</li>
+                <li><strong>Enter your M-Pesa PIN</strong> to complete the payment</li>
+                <li><strong>Wait for confirmation</strong> - This page will update automatically</li>
+                <li><strong>You'll receive an SMS</strong> from M-Pesa (Transaction: {{ checkout_id|slice:":10" }}...)</li>
+                <li><strong>Your Starlink service</strong> will activate within 5 minutes</li>
+            </ol>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div class="message success" id="success-message">
+            <div class="message-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Payment Successful!</h3>
+            <p>Your Starlink service has been activated. You can now connect to the internet.</p>
+            <div style="margin-top: 20px;">
+                <a href="/" class="button">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+
+        <div class="message error" id="error-message">
+            <div class="message-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3>Payment Failed</h3>
+            <p id="error-details">The payment could not be processed. Please try again.</p>
+            <div style="margin-top: 20px;">
+                <button class="button" onclick="window.location.href='/'">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <a href="/" class="button secondary">
+                <i class="fas fa-arrow-left"></i> Back to Packages
+            </a>
+            
+            <button class="button" onclick="checkPaymentStatus()" id="check-status-btn">
+                <i class="fas fa-sync-alt"></i> Check Status
+            </button>
+            
+            <button class="button secondary" onclick="window.location.reload()">
+                <i class="fas fa-redo"></i> Refresh Page
+            </button>
+        </div>
+
+        <!-- Help Text -->
+        <div style="margin-top: 30px; color: #64748b; font-size: 14px;">
+            <p><i class="fas fa-headset"></i> Need help? Call +254 700 000 000 or email starrlinkhelp@gmail.com</p>
+        </div>
     </div>
-    <a href="/" class="btn">OK</a>
+
+    <div class="footer">
+        <div class="security-badge">
+            <i class="fas fa-shield-alt" style="color: #3ecf8e;"></i>
+            <span>Secure payment • 256-bit SSL Encryption • Powered by SpaceX Starlink</span>
+        </div>
+        <p style="margin-top: 15px; font-size: 12px; color: #64748b;">
+            © 2024 Starlink Kenya. All rights reserved. Starlink is a registered trademark of SpaceX.
+        </p>
+    </div>
+
+    <script>
+        // Get data from URL parameters or Django context
+        const phoneNumber = "{{ phone_number }}";
+        const amount = "{{ amount }}";
+        const packageName = "{{ package_name|escapejs }}";
+        const checkoutId = "{{ checkout_id|escapejs }}";
+        
+        // Also check localStorage for data
+        const storedPhone = localStorage.getItem('last_payment_phone');
+        const storedAmount = localStorage.getItem('last_payment_amount');
+        const storedPackage = localStorage.getItem('last_payment_package');
+        const storedCheckoutId = localStorage.getItem('last_checkout_id');
+        
+        // Use stored data if available
+        if (storedPhone && !phoneNumber) {
+            document.querySelector('.phone-number').textContent = storedPhone;
+        }
+        
+        if (storedAmount && !amount) {
+            document.querySelector('.amount').textContent = 'Ksh ' + storedAmount;
+        }
+        
+        if (storedPackage && !packageName) {
+            document.querySelectorAll('.detail-value')[1].textContent = storedPackage;
+        }
+        
+        if (storedCheckoutId && !checkoutId) {
+            document.getElementById('transaction-id').textContent = storedCheckoutId;
+        }
+        
+        // Countdown timer (5 minutes)
+        let timeLeft = 300; // 5 minutes in seconds
+        const countdownElement = document.getElementById('countdown');
+        let countdownInterval;
+        
+        function updateCountdown() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            countdownElement.textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.textContent = "Time's up!";
+                countdownElement.style.color = "#ef4444";
+                showError("Payment timeout. Please try again.");
+                return;
+            }
+            
+            // Update status based on time elapsed
+            if (timeLeft <= 240) { // After 1 minute
+                document.getElementById('status-pending').classList.add('active');
+            }
+            if (timeLeft <= 180) { // After 2 minutes
+                document.getElementById('status-processing').classList.add('active');
+            }
+            
+            timeLeft--;
+        }
+        
+        // Start countdown
+        countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call
+        
+        // Function to check payment status
+        function checkPaymentStatus() {
+            const checkBtn = document.getElementById('check-status-btn');
+            const originalText = checkBtn.innerHTML;
+            
+            // Show loading on button
+            checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+            checkBtn.disabled = true;
+            
+            // Simulate API call (replace with actual endpoint)
+            setTimeout(() => {
+                // In production, you would make an actual API call here:
+                // fetch(`/api/check-payment/${checkoutId}/`)
+                //   .then(response => response.json())
+                //   .then(data => { ... });
+                
+                // For now, simulate random success/failure
+                const isSuccess = Math.random() > 0.3; // 70% chance of success
+                
+                if (isSuccess) {
+                    showSuccess();
+                } else {
+                    // Keep checking if not confirmed yet
+                    showMessage("Still waiting for payment confirmation...", "info");
+                }
+                
+                checkBtn.innerHTML = originalText;
+                checkBtn.disabled = false;
+            }, 2000);
+        }
+        
+        // Auto-check status every 30 seconds
+        setInterval(checkPaymentStatus, 30000);
+        
+        // Function to show success message
+        function showSuccess() {
+            clearInterval(countdownInterval);
+            
+            // Update all status indicators
+            document.querySelectorAll('.status-item').forEach(item => {
+                item.classList.add('active');
+            });
+            
+            // Show success message
+            document.getElementById('success-message').style.display = 'block';
+            document.getElementById('countdown').style.display = 'none';
+            document.querySelector('.countdown-label').textContent = 'Payment Confirmed!';
+            
+            // Update page title
+            document.title = "Payment Successful - Starlink Kenya";
+            
+            // Vibrate phone if supported
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
+            }
+            
+            // Play success sound (optional)
+            // const audio = new Audio('/static/sounds/success.mp3');
+            // audio.play();
+            
+            // Clear localStorage
+            localStorage.removeItem('last_payment_phone');
+            localStorage.removeItem('last_payment_amount');
+            localStorage.removeItem('last_payment_package');
+            localStorage.removeItem('last_checkout_id');
+        }
+        
+        // Function to show error message
+        function showError(message) {
+            clearInterval(countdownInterval);
+            
+            document.getElementById('error-details').textContent = message;
+            document.getElementById('error-message').style.display = 'block';
+            
+            // Update page title
+            document.title = "Payment Failed - Starlink Kenya";
+            
+            // Vibrate phone if supported
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+        }
+        
+        // Function to show info message
+        function showMessage(message, type = "info") {
+            // Create temporary message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `
+                <p>${message}</p>
+            `;
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.bottom = '20px';
+            messageDiv.style.left = '50%';
+            messageDiv.style.transform = 'translateX(-50%)';
+            messageDiv.style.zIndex = '1000';
+            messageDiv.style.padding = '15px 25px';
+            messageDiv.style.borderRadius = '10px';
+            messageDiv.style.background = type === 'info' ? 'rgba(59, 130, 246, 0.9)' : 'rgba(34, 197, 94, 0.9)';
+            
+            document.body.appendChild(messageDiv);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+        
+        // Listen for visibility change (tab switch)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // User switched back to tab, check status
+                checkPaymentStatus();
+            }
+        });
+        
+        // Simulate payment completion after 2-3 minutes (for demo)
+        // Remove this in production!
+        setTimeout(() => {
+            if (timeLeft > 120 && Math.random() > 0.5) {
+                showSuccess();
+            }
+        }, 120000); // After 2 minutes
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update transaction ID in instructions
+            const instructionItems = document.querySelectorAll('.instructions li');
+            if (instructionItems.length > 3 && checkoutId) {
+                instructionItems[3].innerHTML = instructionItems[3].innerHTML.replace(
+                    '{{ checkout_id|slice:":10" }}...',
+                    checkoutId.substring(0, 10) + '...'
+                );
+            }
+            
+            // Start auto-check after 30 seconds
+            setTimeout(checkPaymentStatus, 30000);
+        });
+    </script>
 </body>
 </html>

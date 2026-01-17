@@ -6,7 +6,7 @@
     <title>Starlink Payment Portal</title>
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #0a0e17;
+            background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
             color: white;
             min-height: 100vh;
             padding: 20px;
@@ -38,10 +38,11 @@
             height: 100%;
             background: 
                 radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(3px 3px at 40px 70px, #fff, transparent),
+                radial-gradient(3px 3px at 40px 70px, #3ecf8e, transparent),
                 radial-gradient(1px 1px at 90px 40px, #fff, transparent),
                 radial-gradient(2px 2px at 130px 80px, #fff, transparent),
-                radial-gradient(3px 3px at 160px 120px, #eee, transparent);
+                radial-gradient(3px 3px at 160px 120px, #eee, transparent),
+                radial-gradient(1.5px 1.5px at 200px 150px, #3ecf8e, transparent);
             z-index: -2;
             animation: twinkle 8s infinite alternate;
         }
@@ -123,137 +124,248 @@
             top: 2px;
         }
 
+        /* Comet Animation */
+        .comet {
+            position: fixed;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3ecf8e, transparent);
+            transform: rotate(-45deg);
+            z-index: -1;
+            opacity: 0;
+            animation: cometFly 15s linear infinite;
+        }
+
         /* Container */
         .container {
-            max-width: 450px;
+            max-width: 550px;
             background: rgba(16, 24, 39, 0.85);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             padding: 40px 30px;
             margin: auto;
-            border-radius: 25px;
+            border-radius: 30px;
             box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(62, 207, 142, 0.1),
-                inset 0 0 30px rgba(62, 207, 142, 0.05);
+                0 25px 80px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(62, 207, 142, 0.15),
+                inset 0 0 40px rgba(62, 207, 142, 0.08);
             animation: floatIn 1s ease-out;
             position: relative;
             z-index: 1;
-            border: 1px solid rgba(62, 207, 142, 0.2);
+            border: 1px solid rgba(62, 207, 142, 0.25);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .header-icon {
+            font-size: 40px;
+            color: #3ecf8e;
+            animation: pulse 3s infinite;
         }
 
         /* Title with Glow Effect */
         h2 {
             color: #3ecf8e;
             font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            margin-bottom: 35px;
-            letter-spacing: 1.5px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             position: relative;
-            font-size: 28px;
-            text-shadow: 0 0 20px rgba(62, 207, 142, 0.5);
+            font-size: 32px;
+            text-shadow: 0 0 25px rgba(62, 207, 142, 0.7);
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
         }
 
         h2::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
+            width: 150px;
+            height: 4px;
             background: linear-gradient(90deg, transparent, #3ecf8e, transparent);
             border-radius: 2px;
+            box-shadow: 0 0 15px rgba(62, 207, 142, 0.5);
         }
 
-        /* Payment Buttons */
-        .button {
-            width: 100%;
-            padding: 20px;
-            margin: 15px 0;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
-            border: none;
+        /* Plan Toggle */
+        .plan-toggle {
+            display: flex;
+            background: rgba(30, 41, 59, 0.8);
             border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(62, 207, 142, 0.2);
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-weight: 600;
             cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(62, 207, 142, 0.3);
+        }
+
+        /* Packages Grid */
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .package-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(16, 24, 39, 0.9));
+            border-radius: 20px;
+            padding: 25px 20px;
+            border: 2px solid rgba(62, 207, 142, 0.15);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 
-                0 10px 30px rgba(62, 207, 142, 0.3),
-                inset 0 1px 0 rgba(255,255,255,0.2);
+            cursor: pointer;
             position: relative;
             overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: left;
         }
 
-        .button:hover {
-            transform: translateY(-5px);
+        .package-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(62, 207, 142, 0.5);
             box-shadow: 
-                0 15px 40px rgba(62, 207, 142, 0.5),
-                0 0 0 2px rgba(62, 207, 142, 0.2),
-                inset 0 1px 0 rgba(255,255,255,0.3);
-            background: linear-gradient(135deg, #4ae09e 0%, #3aad9f 100%);
+                0 15px 40px rgba(62, 207, 142, 0.2),
+                0 0 0 1px rgba(62, 207, 142, 0.3);
         }
 
-        .button:active {
-            transform: translateY(-2px);
+        .package-card.popular {
+            border-color: #3ecf8e;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(16, 24, 39, 0.95));
+            transform: scale(1.02);
         }
 
-        .button::before {
-            content: '';
+        .package-card.popular::before {
+            content: 'MOST POPULAR';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.7s;
-        }
-
-        .button:hover::before {
-            left: 100%;
-        }
-
-        .button-content {
-            flex: 1;
-        }
-
-        .plan-title {
-            font-size: 18px;
+            top: 15px;
+            right: -35px;
+            background: #3ecf8e;
+            color: white;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            font-size: 12px;
             font-weight: 700;
-            display: block;
-            margin-bottom: 5px;
+            letter-spacing: 1px;
         }
 
-        .plan-price {
-            font-size: 24px;
+        .package-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #3ecf8e;
+        }
+
+        .package-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .package-duration {
+            color: #6ee7b7;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .package-features {
+            text-align: left;
+            margin: 15px 0;
+            padding: 0 10px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .feature i {
+            color: #3ecf8e;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        .package-price {
+            font-size: 36px;
             font-weight: 800;
-            display: block;
+            color: #3ecf8e;
+            margin: 20px 0 10px;
+            text-shadow: 0 0 20px rgba(62, 207, 142, 0.5);
         }
 
-        .button-icon {
-            font-size: 24px;
-            color: rgba(255,255,255,0.9);
-            animation: pulse 2s infinite;
+        .package-price span {
+            font-size: 16px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .select-btn {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .select-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(62, 207, 142, 0.4);
         }
 
         /* Read More */
         .read-more {
             color: #6ee7b7;
             cursor: pointer;
-            margin-top: 25px;
+            margin: 25px 0;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-size: 16px;
             font-weight: 500;
             transition: all 0.3s;
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 12px 20px;
+            border-radius: 12px;
             background: rgba(62, 207, 142, 0.1);
         }
 
@@ -270,34 +382,34 @@
         /* Description */
         .description {
             display: none;
-            background: rgba(30, 41, 59, 0.8);
-            padding: 25px;
+            background: rgba(30, 41, 59, 0.9);
+            padding: 30px;
             margin-top: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             text-align: left;
             font-size: 15px;
             line-height: 1.8;
-            border-left: 4px solid #3ecf8e;
+            border-left: 5px solid #3ecf8e;
             animation: slideDown 0.5s ease-out;
         }
 
         .description strong {
             color: #6ee7b7;
             display: block;
-            margin-bottom: 10px;
-            font-size: 16px;
+            margin-bottom: 15px;
+            font-size: 18px;
         }
 
         /* Payment Status */
         #payment-status {
             display: none;
-            background: rgba(30, 41, 59, 0.9);
-            padding: 30px;
-            border-radius: 20px;
-            margin-top: 25px;
+            background: rgba(16, 24, 39, 0.95);
+            padding: 40px;
+            border-radius: 25px;
+            margin-top: 30px;
             animation: expandIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid rgba(62, 207, 142, 0.3);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(62, 207, 142, 0.4);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
         }
@@ -314,59 +426,64 @@
         }
 
         #success-tick {
-            font-size: 50px;
+            font-size: 60px;
             color: #3ecf8e;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: block;
             animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            text-shadow: 0 0 30px rgba(62, 207, 142, 0.7);
+            text-shadow: 0 0 40px rgba(62, 207, 142, 0.8);
         }
 
         #status-message {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            margin: 15px 0;
+            margin: 20px 0;
             color: #a7f3d0;
         }
 
         #instruction-message {
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 18px;
+            line-height: 1.7;
             color: #cbd5e1;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         #ok-button {
             background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
-            padding: 15px 35px;
+            padding: 16px 40px;
             border: none;
             color: white;
-            border-radius: 12px;
+            border-radius: 15px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
             transition: all 0.3s;
-            box-shadow: 0 8px 25px rgba(62, 207, 142, 0.3);
+            box-shadow: 0 10px 30px rgba(62, 207, 142, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto;
         }
 
         #ok-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(62, 207, 142, 0.5);
-            background: linear-gradient(135deg, #4ae09e 0%, #3aad9f 100%);
+            box-shadow: 0 15px 35px rgba(62, 207, 142, 0.6);
         }
 
         /* Footer */
         .footer {
-            margin-top: 30px;
+            margin-top: 40px;
             font-size: 14px;
             color: #94a3b8;
-            padding: 20px;
-            background: rgba(16, 24, 39, 0.6);
-            border-radius: 15px;
-            max-width: 450px;
+            padding: 25px;
+            background: rgba(16, 24, 39, 0.7);
+            border-radius: 20px;
+            max-width: 550px;
             margin-left: auto;
             margin-right: auto;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(62, 207, 142, 0.15);
         }
 
         .footer a {
@@ -376,12 +493,21 @@
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
 
         .footer a:hover {
             color: #6ee7b7;
-            text-shadow: 0 0 10px rgba(62, 207, 142, 0.5);
+            text-shadow: 0 0 15px rgba(62, 207, 142, 0.5);
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 13px;
         }
 
         /* Animations */
@@ -398,32 +524,51 @@
                     0 0 120px rgba(245, 243, 206, 0.2);
             }
             25% { 
-                transform: translate(-10px, 15px) rotate(2deg);
+                transform: translate(-15px, 20px) rotate(2deg);
                 box-shadow: 
-                    0 0 70px rgba(245, 243, 206, 0.5),
-                    0 0 140px rgba(245, 243, 206, 0.3);
+                    0 0 80px rgba(245, 243, 206, 0.5),
+                    0 0 150px rgba(245, 243, 206, 0.3);
             }
             50% { 
-                transform: translate(5px, -10px) rotate(-1deg); 
+                transform: translate(10px, -15px) rotate(-1deg); 
             }
             75% { 
-                transform: translate(15px, 5px) rotate(1deg); 
+                transform: translate(20px, 10px) rotate(1deg); 
             }
         }
 
         @keyframes orbit {
             0% { 
-                transform: rotate(0deg) translateX(200px) rotate(0deg); 
+                transform: rotate(0deg) translateX(250px) rotate(0deg); 
             }
             100% { 
-                transform: rotate(360deg) translateX(200px) rotate(-360deg); 
+                transform: rotate(360deg) translateX(250px) rotate(-360deg); 
+            }
+        }
+
+        @keyframes cometFly {
+            0% {
+                left: -100px;
+                top: 50vh;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                left: 100vw;
+                top: 10vh;
+                opacity: 0;
             }
         }
 
         @keyframes floatIn {
             from { 
                 opacity: 0; 
-                transform: translateY(30px) scale(0.95); 
+                transform: translateY(40px) scale(0.9); 
             }
             to { 
                 opacity: 1; 
@@ -432,19 +577,19 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
         @keyframes slideDown {
             from { 
                 opacity: 0; 
                 max-height: 0; 
-                transform: translateY(-10px); 
+                transform: translateY(-15px); 
             }
             to { 
                 opacity: 1; 
-                max-height: 300px; 
+                max-height: 500px; 
                 transform: translateY(0); 
             }
         }
@@ -452,7 +597,7 @@
         @keyframes expandIn {
             from { 
                 opacity: 0; 
-                transform: scale(0.9); 
+                transform: scale(0.8); 
             }
             to { 
                 opacity: 1; 
@@ -467,10 +612,10 @@
             }
             50% { 
                 opacity: 1; 
-                transform: scale(1.05); 
+                transform: scale(1.1); 
             }
             70% { 
-                transform: scale(0.9); 
+                transform: scale(0.95); 
             }
             100% { 
                 transform: scale(1); 
@@ -484,26 +629,25 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
                 margin: 10px;
+                max-width: 95%;
             }
 
             h2 {
-                font-size: 24px;
+                font-size: 26px;
             }
 
-            .button {
-                padding: 18px;
+            .packages-grid {
+                grid-template-columns: 1fr;
             }
 
-            .plan-title {
-                font-size: 16px;
-            }
-
-            .plan-price {
-                font-size: 22px;
+            .package-card.popular::before {
+                right: -30px;
+                font-size: 10px;
+                padding: 4px 35px;
             }
 
             .moon {
@@ -514,11 +658,11 @@
             }
 
             .satellite {
-                display: none; /* Hide on small screens for better performance */
+                display: none;
             }
         }
 
-        @media (max-width: 400px) {
+        @media (max-width: 480px) {
             body {
                 padding: 10px;
             }
@@ -527,14 +671,17 @@
                 padding: 25px 15px;
             }
 
-            .button {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
+            h2 {
+                font-size: 22px;
             }
 
-            .button-icon {
-                order: -1;
+            .package-price {
+                font-size: 32px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
@@ -546,7 +693,7 @@
             starsContainer.id = 'stars';
             document.body.appendChild(starsContainer);
 
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 200; i++) {
                 const star = document.createElement('div');
                 const size = Math.random() * 3;
                 const x = Math.random() * 100;
@@ -555,14 +702,31 @@
                 star.className = `star ${size < 1 ? 'small' : size < 2 ? 'medium' : 'large'}`;
                 star.style.left = `${x}vw`;
                 star.style.top = `${y}vh`;
-                star.style.opacity = Math.random() * 0.7 + 0.3;
+                star.style.opacity = Math.random() * 0.8 + 0.2;
                 
                 starsContainer.appendChild(star);
             }
         }
 
-        // Initialize stars when page loads
-        window.addEventListener('DOMContentLoaded', createStars);
+        // Create comets
+        function createComets() {
+            for (let i = 0; i < 3; i++) {
+                const comet = document.createElement('div');
+                comet.className = 'comet';
+                comet.style.left = `${Math.random() * 50}%`;
+                comet.style.top = `${Math.random() * 50}%`;
+                comet.style.animationDelay = `${Math.random() * 15}s`;
+                document.body.appendChild(comet);
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            createComets();
+            // Show data packages by default
+            showPackages('data');
+        });
     </script>
 </head>
 <body>
@@ -575,44 +739,251 @@
 
     <!-- Main Container -->
     <div class="container">
-        <h2>🚀 Starlink Payment Portal</h2>
-
-        <button class="button" onclick="initiateMpesaPayment(85)">
-            <div class="button-content">
-                <span class="plan-title">7 Days – 10GB High-Speed</span>
-                <span class="plan-price">Ksh 85</span>
+        <div class="header">
+            <div class="header-icon">🛰️</div>
+            <div>
+                <h2>Starlink Kenya</h2>
+                <p class="subtitle">High-Speed Satellite Internet Powered by SpaceX</p>
             </div>
-            <div class="button-icon">🛰️</div>
-        </button>
+        </div>
 
-        <button class="button" onclick="initiateMpesaPayment(155)">
-            <div class="button-content">
-                <span class="plan-title">21 Days – 30GB Premium</span>
-                <span class="plan-price">Ksh 155</span>
-            </div>
-            <div class="button-icon">🚀</div>
-        </button>
+        <!-- Plan Toggle -->
+        <div class="plan-toggle">
+            <button class="toggle-btn active" onclick="showPackages('data')">Data Plans</button>
+            <button class="toggle-btn" onclick="showPackages('monthly')">Monthly Plans</button>
+            <button class="toggle-btn" onclick="showPackages('business')">Business Plans</button>
+        </div>
 
-        <button class="button" onclick="initiateMpesaPayment(225)">
-            <div class="button-content">
-                <span class="plan-title">31 Days – Unlimited Data</span>
-                <span class="plan-price">Ksh 225</span>
+        <!-- Packages Grid -->
+        <div id="packages-container">
+            <!-- Data Plans (Default) -->
+            <div class="packages-grid" id="data-packages">
+                <!-- Original 3 Packages -->
+                <div class="package-card">
+                    <div class="package-icon">🌐</div>
+                    <div class="package-name">Starter Pack</div>
+                    <div class="package-duration">7 DAYS ACCESS</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-bolt"></i> 10GB High-Speed Data</div>
+                        <div class="feature"><i class="fas fa-globe"></i> Global Coverage</div>
+                        <div class="feature"><i class="fas fa-satellite"></i> 24/7 Support</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 150 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 85<span>/week</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(85, 'Starter Pack (7 Days - 10GB)')">
+                        <i class="fas fa-rocket"></i> SELECT PLAN
+                    </button>
+                </div>
+
+                <div class="package-card popular">
+                    <div class="package-icon">🚀</div>
+                    <div class="package-name">Premium Pack</div>
+                    <div class="package-duration">21 DAYS ACCESS</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-bolt"></i> 30GB High-Speed Data</div>
+                        <div class="feature"><i class="fas fa-globe"></i> Priority Access</div>
+                        <div class="feature"><i class="fas fa-shield-alt"></i> Enhanced Security</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 200 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 155<span>/3 weeks</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(155, 'Premium Pack (21 Days - 30GB)')">
+                        <i class="fas fa-crown"></i> SELECT POPULAR
+                    </button>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-icon">🌌</div>
+                    <div class="package-name">Unlimited Pack</div>
+                    <div class="package-duration">31 DAYS ACCESS</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-infinity"></i> Unlimited Data</div>
+                        <div class="feature"><i class="fas fa-globe"></i> Global Roaming</div>
+                        <div class="feature"><i class="fas fa-headset"></i> Priority Support</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 300 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 225<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(225, 'Unlimited Pack (31 Days - Unlimited)')">
+                        <i class="fas fa-infinity"></i> GO UNLIMITED
+                    </button>
+                </div>
+
+                <!-- 3 New Packages -->
+                <div class="package-card">
+                    <div class="package-icon">⚡</div>
+                    <div class="package-name">Express Pack</div>
+                    <div class="package-duration">3 DAYS ACCESS</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-bolt"></i> 5GB High-Speed Data</div>
+                        <div class="feature"><i class="fas fa-clock"></i> Instant Activation</div>
+                        <div class="feature"><i class="fas fa-mobile-alt"></i> Mobile Hotspot</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 100 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 45<span>/3 days</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(45, 'Express Pack (3 Days - 5GB)')">
+                        <i class="fas fa-bolt"></i> SELECT PLAN
+                    </button>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-icon">🏆</div>
+                    <div class="package-name">Elite Pack</div>
+                    <div class="package-duration">14 DAYS ACCESS</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-bolt"></i> 20GB High-Speed Data</div>
+                        <div class="feature"><i class="fas fa-gamepad"></i> Gaming Optimized</div>
+                        <div class="feature"><i class="fas fa-video"></i> 4K Streaming</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 250 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 120<span>/2 weeks</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(120, 'Elite Pack (14 Days - 20GB)')">
+                        <i class="fas fa-trophy"></i> SELECT ELITE
+                    </button>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-icon">💼</div>
+                    <div class="package-name">Family Pack</div>
+                    <div class="package-duration">30 DAYS ACCESS</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-bolt"></i> 50GB High-Speed Data</div>
+                        <div class="feature"><i class="fas fa-users"></i> 5 Devices Simultaneous</div>
+                        <div class="feature"><i class="fas fa-home"></i> Home & Office Use</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 200 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 190<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(190, 'Family Pack (30 Days - 50GB)')">
+                        <i class="fas fa-home"></i> FOR FAMILY
+                    </button>
+                </div>
             </div>
-            <div class="button-icon">🌌</div>
-        </button>
+
+            <!-- Monthly Plans -->
+            <div class="packages-grid" id="monthly-packages" style="display: none;">
+                <div class="package-card">
+                    <div class="package-icon">🌙</div>
+                    <div class="package-name">Night Owl</div>
+                    <div class="package-duration">MONTHLY</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-moon"></i> Unlimited 8PM - 6AM</div>
+                        <div class="feature"><i class="fas fa-bolt"></i> 20GB Daytime Data</div>
+                        <div class="feature"><i class="fas fa-gamepad"></i> Gaming Priority</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 150 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 1,200<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(1200, 'Night Owl Monthly Plan')">
+                        <i class="fas fa-moon"></i> SELECT PLAN
+                    </button>
+                </div>
+
+                <div class="package-card popular">
+                    <div class="package-icon">☀️</div>
+                    <div class="package-name">Day Pro</div>
+                    <div class="package-duration">MONTHLY</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-sun"></i> 100GB Daytime Data</div>
+                        <div class="feature"><i class="fas fa-briefcase"></i> Business Priority</div>
+                        <div class="feature"><i class="fas fa-video"></i> 4K Video Streaming</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 250 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 2,500<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(2500, 'Day Pro Monthly Plan')">
+                        <i class="fas fa-crown"></i> SELECT POPULAR
+                    </button>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-icon">🏠</div>
+                    <div class="package-name">Family Plus</div>
+                    <div class="package-duration">MONTHLY</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-users"></i> 8 Devices Support</div>
+                        <div class="feature"><i class="fas fa-infinity"></i> Unlimited Evenings</div>
+                        <div class="feature"><i class="fas fa-shield-alt"></i> Parental Controls</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 300 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 3,500<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(3500, 'Family Plus Monthly Plan')">
+                        <i class="fas fa-home"></i> FOR FAMILY
+                    </button>
+                </div>
+            </div>
+
+            <!-- Business Plans -->
+            <div class="packages-grid" id="business-packages" style="display: none;">
+                <div class="package-card">
+                    <div class="package-icon">🏢</div>
+                    <div class="package-name">Startup Pro</div>
+                    <div class="package-duration">MONTHLY</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-bolt"></i> 200GB Data</div>
+                        <div class="feature"><i class="fas fa-users"></i> 15 Devices</div>
+                        <div class="feature"><i class="fas fa-headset"></i> Business Support</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 500 Mbps</div>
+                    </div>
+                    <div class="package-price">Ksh 5,000<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(5000, 'Startup Pro Business Plan')">
+                        <i class="fas fa-briefcase"></i> FOR STARTUPS
+                    </button>
+                </div>
+
+                <div class="package-card popular">
+                    <div class="package-icon">🏭</div>
+                    <div class="package-name">Enterprise Plus</div>
+                    <div class="package-duration">MONTHLY</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-infinity"></i> Unlimited Data</div>
+                        <div class="feature"><i class="fas fa-server"></i> 50 Devices</div>
+                        <div class="feature"><i class="fas fa-shield-alt"></i> Advanced Security</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 1 Gbps</div>
+                    </div>
+                    <div class="package-price">Ksh 12,000<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(12000, 'Enterprise Plus Business Plan')">
+                        <i class="fas fa-crown"></i> FOR ENTERPRISE
+                    </button>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-icon">🌍</div>
+                    <div class="package-name">Global Business</div>
+                    <div class="package-duration">MONTHLY</div>
+                    <div class="package-features">
+                        <div class="feature"><i class="fas fa-globe"></i> Global Roaming</div>
+                        <div class="feature"><i class="fas fa-satellite"></i> 99.9% Uptime SLA</div>
+                        <div class="feature"><i class="fas fa-headset"></i> 24/7 Dedicated Support</div>
+                        <div class="feature"><i class="fas fa-wifi"></i> Up to 2 Gbps</div>
+                    </div>
+                    <div class="package-price">Ksh 25,000<span>/month</span></div>
+                    <button class="select-btn" onclick="initiateMpesaPayment(25000, 'Global Business Plan')">
+                        <i class="fas fa-globe-americas"></i> GLOBAL PLAN
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <span class="read-more" id="readMore" onclick="toggleDescription()">
             <i class="fas fa-chevron-down"></i>
-            <span>Read More About Starlink</span>
+            <span>Read More About Starlink Services</span>
         </span>
 
         <div class="description" id="description">
-            <strong>🌍 Starlink Satellite Internet in Kenya</strong>
-            <p>Experience next-generation satellite internet powered by SpaceX's Starlink constellation. Our service delivers high-speed, low-latency connectivity across Kenya, including remote areas where traditional internet is unavailable.</p>
-            <p>• Global satellite coverage<br>
-               • Latency as low as 20ms<br>
-               • Weather-resistant equipment<br>
-               • 24/7 customer support</p>
+            <strong>🚀 Next-Generation Satellite Internet in Kenya</strong>
+            <p>Starlink provides high-speed, low-latency broadband internet across Kenya. Powered by SpaceX's advanced satellite constellation in low Earth orbit, Starlink enables video calls, online gaming, streaming, and other high data rate activities that are not possible with traditional satellite internet.</p>
+            
+            <strong>📡 Key Features:</strong>
+            <p>• <strong>High Speed:</strong> Download speeds from 100 Mbps to 300 Mbps<br>
+               • <strong>Low Latency:</strong> As low as 20ms for real-time applications<br>
+               • <strong>Global Coverage:</strong> Seamless connectivity anywhere in Kenya<br>
+               • <strong>Easy Setup:</strong> Plug-and-play installation in minutes<br>
+               • <strong>Weather Resistant:</strong> Designed to withstand harsh weather conditions<br>
+               • <strong>No Contracts:</strong> Month-to-month service, cancel anytime</p>
+            
+            <strong>🎯 Ideal For:</strong>
+            <p>• Remote areas without traditional broadband<br>
+               • Rural businesses and farms<br>
+               • Digital nomads and travelers<br>
+               • Emergency services and NGOs<br>
+               • Gaming and streaming enthusiasts<br>
+               • Online education and telemedicine</p>
         </div>
 
         <!-- Payment Status -->
@@ -623,33 +994,62 @@
             <p id="status-message"></p>
             <p id="instruction-message"></p>
             <button id="ok-button" onclick="closeMessage()">
-                <i class="fas fa-check"></i> Confirm
+                <i class="fas fa-check"></i> Confirm & Continue
             </button>
         </div>
     </div>
 
     <div class="footer">
-        <p>Need help? Contact our support team:</p>
+        <p>Need assistance? Our support team is here to help:</p>
         <p>
             <a href="mailto:starrlinkhelp@gmail.com">
-                <i class="fas fa-envelope"></i> contact us
+                <i class="fas fa-envelope"></i> starrlinkhelp@gmail.com
             </a>
-            
+            <span style="margin: 0 10px;">•</span>
+            <a href="tel:+254700000000">
+                <i class="fas fa-phone"></i> +254 700 000 000
+            </a>
         </p>
-        <p style="margin-top: 10px; font-size: 12px; color: #64748b;">
-            <i class="fas fa-shield-alt"></i> Secure payment • Powered by SpaceX Starlink
+        <div class="security-badge">
+            <i class="fas fa-shield-alt" style="color: #3ecf8e;"></i>
+            <span>Secure payment • 256-bit SSL Encryption • Powered by SpaceX Starlink</span>
+        </div>
+        <p style="margin-top: 15px; font-size: 12px; color: #64748b;">
+            © 2024 Starlink Kenya. All rights reserved. Starlink is a registered trademark of SpaceX.
         </p>
     </div>
 
     <script>
-        // All original functionality remains exactly the same
-        function initiateMpesaPayment(amount) {
-            let phone = prompt("Enter your Safaricom phone number:");
+        // Package category toggle
+        function showPackages(category) {
+            // Update toggle buttons
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show selected category
+            document.getElementById('data-packages').style.display = 'none';
+            document.getElementById('monthly-packages').style.display = 'none';
+            document.getElementById('business-packages').style.display = 'none';
+            
+            document.getElementById(`${category}-packages`).style.display = 'grid';
+        }
+
+        // M-Pesa Payment Function
+        function initiateMpesaPayment(amount, packageName) {
+            let phone = prompt(`Enter your Safaricom phone number for ${packageName}:`);
 
             if (!phone || phone.length < 10) {
-                alert("Invalid phone number. Please try again.");
+                alert("Please enter a valid Safaricom phone number (e.g., 0712345678 or 254712345678)");
                 return;
             }
+
+            // Show loading state
+            const originalButton = event.target;
+            const originalText = originalButton.innerHTML;
+            originalButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            originalButton.disabled = true;
 
             fetch('/mpesa/stk_push/', {
                 method: 'POST',
@@ -657,27 +1057,53 @@
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCSRFToken()
                 },
-                body: JSON.stringify({ phone_number: phone, amount: amount })
+                body: JSON.stringify({ 
+                    phone_number: phone, 
+                    amount: amount,
+                    package_name: packageName 
+                })
             })
             .then(response => response.json())
             .then(data => {
+                originalButton.innerHTML = originalText;
+                originalButton.disabled = false;
+                
                 if (data.status === "success") {
+                    // Show success message
                     document.getElementById("payment-status").style.display = "block";
-                    document.getElementById("success-tick").style.display = "inline-block";
+                    document.getElementById("success-tick").style.display = "block";
                     document.getElementById("status-message").innerText = "Payment Initiated!";
                     document.getElementById("instruction-message").innerText = 
-                        "We have sent an STK push to your phone (" + phone +
-                        "). Please enter your PIN to complete the purchase.";
-                    document.getElementById("ok-button").style.display = "inline-block";
+                        `We've sent an M-Pesa STK push to ${phone} for ${packageName}. 
+                        Please enter your M-Pesa PIN on your phone to complete the payment of Ksh ${amount}.`;
+                    
+                    // Store in session for pending page
+                    sessionStorage.setItem('payment_phone', phone);
+                    sessionStorage.setItem('payment_amount', amount);
+                    sessionStorage.setItem('payment_package', packageName);
+                    
+                    // Auto-redirect after 3 seconds
+                    setTimeout(() => {
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        } else {
+                            window.location.href = "/payment/pending/";
+                        }
+                    }, 3000);
+                    
                 } else {
-                    alert("❌ Failed: " + data.message);
+                    alert("❌ Payment Initiation Failed: " + data.message);
                 }
             })
             .catch(error => {
-                alert("⚠ An error occurred: " + error);
+                originalButton.innerHTML = originalText;
+                originalButton.disabled = false;
+                alert("⚠ Network Error: Please check your internet connection and try again.");
+                console.error('Payment error:', error);
             });
         }
 
+        // Get CSRF Token
         function getCSRFToken() {
             let cookieValue = null;
             let cookies = document.cookie.split(';');
@@ -691,11 +1117,12 @@
             return cookieValue;
         }
 
+        // Toggle description
         function toggleDescription() {
             let box = document.getElementById("description");
             let text = document.getElementById("readMore");
 
-            if (box.style.display === "none") {
+            if (box.style.display === "none" || !box.style.display) {
                 box.style.display = "block";
                 text.innerHTML = '<i class="fas fa-chevron-up"></i><span>Read Less</span>';
             } else {
@@ -704,20 +1131,21 @@
             }
         }
 
+        // Close payment message
         function closeMessage() {
             document.getElementById("payment-status").style.display = "none";
-            document.getElementById("ok-button").style.display = "none";
+            window.location.href = "/payment/pending/";
         }
 
-        // Add some interactive effects
+        // Add interactive effects
         document.addEventListener('DOMContentLoaded', function() {
-            // Add hover effect to buttons
-            const buttons = document.querySelectorAll('.button');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
+            // Package card hover effects
+            const cards = document.querySelectorAll('.package-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
                 });
-                button.addEventListener('mouseleave', function() {
+                card.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0)';
                 });
             });
