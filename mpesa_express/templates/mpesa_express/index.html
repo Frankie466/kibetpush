@@ -3,7 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Starlink Payment Portal</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0a0e17">
+    <meta name="msapplication-TileColor" content="#3ecf8e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Starlink Kenya">
+
+
+    <meta name="mobile-web-app-capable" content="yes"> <!-- ADD THIS LINE -->
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
+    
+    <!-- Icons for PWA -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512x512.png">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/static/icons/icon-167x167.png">
+    
+    <title>Starlink Kenya - Satellite Internet Payments</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -26,6 +49,158 @@
             text-align: center;
             overflow-x: hidden;
             position: relative;
+        }
+
+        /* Safe area for iPhone notch in standalone mode */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            body.standalone-mode {
+                padding-top: calc(20px + env(safe-area-inset-top));
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+        }
+
+        /* PWA Install Prompt */
+        .pwa-install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(16, 24, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(62, 207, 142, 0.4);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pwa-install-prompt.show {
+            display: block;
+        }
+
+        .pwa-prompt-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pwa-prompt-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .pwa-prompt-text {
+            flex: 1;
+        }
+
+        .pwa-prompt-text h3 {
+            color: #3ecf8e;
+            font-size: 18px;
+            margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .pwa-prompt-text p {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .pwa-prompt-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .pwa-install-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #3ecf8e 0%, #2a9d8f 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .pwa-install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(62, 207, 142, 0.4);
+        }
+
+        .pwa-cancel-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .pwa-cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .pwa-prompt-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 20px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .pwa-prompt-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Install badge styling */
+        .install-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(62, 207, 142, 0.2);
+            border: 2px solid #3ecf8e;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #3ecf8e;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            animation: fadeIn 0.5s ease-out;
         }
 
         /* Space Background with Stars */
@@ -628,6 +803,22 @@
             100% { transform: translateX(100%); }
         }
 
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -659,6 +850,11 @@
 
             .satellite {
                 display: none;
+            }
+
+            .pwa-install-prompt {
+                max-width: 90%;
+                padding: 15px;
             }
         }
 
@@ -729,6 +925,16 @@
             
             // Initialize description as hidden
             document.getElementById("description").style.display = "none";
+            
+            // Check if app is running in standalone mode
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('📱 Running in standalone PWA mode');
+                document.body.classList.add('standalone-mode');
+                const installBadge = document.querySelector('.install-badge');
+                if (installBadge) {
+                    installBadge.style.display = 'flex';
+                }
+            }
         });
     </script>
 </head>
@@ -736,6 +942,12 @@
 
     <!-- Moon -->
     <div class="moon"></div>
+    
+    <!-- Install Badge -->
+    <div class="install-badge">
+        <i class="fas fa-mobile-alt"></i>
+        <span>Installed App</span>
+    </div>
 
     <!-- Satellite -->
     <div class="satellite"></div>
@@ -1022,8 +1234,32 @@
         </p>
     </div>
 
+    <!-- PWA Install Prompt -->
+    <div id="pwaInstallPrompt" class="pwa-install-prompt">
+        <button class="pwa-prompt-close" onclick="dismissPWAInstallPrompt()">&times;</button>
+        <div class="pwa-prompt-content">
+            <div class="pwa-prompt-icon">
+                <i class="fas fa-satellite"></i>
+            </div>
+            <div class="pwa-prompt-text">
+                <h3>Install Starlink Kenya</h3>
+                <p>Get quick access to satellite internet payments on your home screen</p>
+            </div>
+        </div>
+        <div class="pwa-prompt-buttons">
+            <button class="pwa-cancel-btn" onclick="dismissPWAInstallPrompt()">
+                Not Now
+            </button>
+            <button class="pwa-install-btn" onclick="installPWA()">
+                Install App
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Package category toggle
+        // ========================================
+        // Package Functions
+        // ========================================
         function showPackages(category) {
             // Update toggle buttons
             document.querySelectorAll('.toggle-btn').forEach(btn => {
@@ -1046,8 +1282,16 @@
             document.getElementById(`${category}-packages`).style.display = 'grid';
         }
 
-        // M-Pesa Payment Function
+        // ========================================
+        // M-Pesa Payment Functions
+        // ========================================
         function initiateMpesaPayment(amount, packageName) {
+            // Check if offline
+            if (!navigator.onLine) {
+                showOfflineMessage();
+                return;
+            }
+            
             let phone = prompt(`Enter your Safaricom phone number for ${packageName}:`);
 
             if (!phone || phone.length < 10) {
@@ -1115,7 +1359,6 @@
             });
         }
 
-        // Get CSRF Token
         function getCSRFToken() {
             let cookieValue = null;
             let cookies = document.cookie.split(';');
@@ -1129,7 +1372,23 @@
             return cookieValue;
         }
 
-        // Toggle description
+        function showOfflineMessage() {
+            document.getElementById("payment-status").style.display = "block";
+            document.getElementById("success-tick").innerHTML = '<i class="fas fa-wifi-slash"></i>';
+            document.getElementById("status-message").innerText = "You're Offline";
+            document.getElementById("instruction-message").innerText = 
+                "Internet connection required for payments. Please check your connection and try again.";
+            document.getElementById("ok-button").innerHTML = '<i class="fas fa-redo"></i> Try Again';
+            document.getElementById("ok-button").onclick = function() {
+                if (navigator.onLine) {
+                    window.location.reload();
+                } else {
+                    document.getElementById("payment-status").style.display = "none";
+                }
+            };
+            document.getElementById("ok-button").style.display = "inline-block";
+        }
+
         function toggleDescription() {
             let box = document.getElementById("description");
             let text = document.getElementById("readMore");
@@ -1145,7 +1404,6 @@
             }
         }
 
-        // Close payment message
         function closeMessage() {
             document.getElementById("payment-status").style.display = "none";
             // Get phone and package from sessionStorage for redirect
@@ -1161,7 +1419,134 @@
             }
         }
 
-        // Add interactive effects
+        // ========================================
+        // PWA Functions
+        // ========================================
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/serviceworker.js')
+                    .then(function(registration) {
+                        console.log('✅ ServiceWorker registration successful with scope:', registration.scope);
+                        
+                        // Check for updates
+                        registration.onupdatefound = function() {
+                            const installingWorker = registration.installing;
+                            installingWorker.onstatechange = function() {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        // New update available
+                                        console.log('🔄 New content is available; please refresh.');
+                                        showUpdateNotification();
+                                    } else {
+                                        // Content is cached for offline use
+                                        console.log('📱 Content is cached for offline use.');
+                                    }
+                                }
+                            };
+                        };
+                    })
+                    .catch(function(error) {
+                        console.log('❌ ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+
+        // Install Prompt Logic
+        let deferredPrompt;
+        const pwaInstallPrompt = document.getElementById('pwaInstallPrompt');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            setTimeout(() => {
+                const promptDismissed = localStorage.getItem('pwaPromptDismissed');
+                const isInstalled = localStorage.getItem('pwaInstalled');
+                
+                if (!promptDismissed && !isInstalled && !window.matchMedia('(display-mode: standalone)').matches) {
+                    pwaInstallPrompt.classList.add('show');
+                }
+            }, 3000);
+        });
+
+        function installPWA() {
+            if (!deferredPrompt) {
+                alert('Your browser does not support installing apps. Try using Chrome or Edge.');
+                return;
+            }
+            
+            deferredPrompt.prompt();
+            
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('✅ User accepted the install prompt');
+                    localStorage.setItem('pwaInstalled', 'true');
+                    showInstallSuccess();
+                } else {
+                    console.log('❌ User dismissed the install prompt');
+                }
+                deferredPrompt = null;
+                pwaInstallPrompt.classList.remove('show');
+            });
+        }
+
+        function dismissPWAInstallPrompt() {
+            pwaInstallPrompt.classList.remove('show');
+            localStorage.setItem('pwaPromptDismissed', 'true');
+            
+            setTimeout(() => {
+                localStorage.removeItem('pwaPromptDismissed');
+            }, 30 * 24 * 60 * 60 * 1000);
+        }
+
+        function showInstallSuccess() {
+            document.getElementById("payment-status").style.display = "block";
+            document.getElementById("success-tick").innerHTML = '<i class="fas fa-download"></i>';
+            document.getElementById("status-message").innerText = "App Installed!";
+            document.getElementById("instruction-message").innerText = 
+                "Starlink Kenya has been installed successfully! You can now access it from your home screen.";
+            document.getElementById("ok-button").innerHTML = '<i class="fas fa-check"></i> Continue to Payment';
+            document.getElementById("ok-button").onclick = function() {
+                document.getElementById("payment-status").style.display = "none";
+            };
+            
+            setTimeout(() => {
+                document.getElementById("payment-status").style.display = "none";
+            }, 5000);
+        }
+
+        function showUpdateNotification() {
+            const updateNotification = document.createElement('div');
+            updateNotification.innerHTML = `
+                <div class="pwa-install-prompt show" id="updateNotification">
+                    <button class="pwa-prompt-close" onclick="this.parentElement.classList.remove('show')">&times;</button>
+                    <div class="pwa-prompt-content">
+                        <div class="pwa-prompt-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="pwa-prompt-text">
+                            <h3>Update Available</h3>
+                            <p>A new version of Starlink Kenya is available</p>
+                        </div>
+                    </div>
+                    <div class="pwa-prompt-buttons">
+                        <button class="pwa-cancel-btn" onclick="this.parentElement.parentElement.classList.remove('show')">
+                            Later
+                        </button>
+                        <button class="pwa-install-btn" onclick="window.location.reload()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                            Update Now
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(updateNotification.firstElementChild);
+        }
+
+        // ========================================
+        // UI Effects
+        // ========================================
         document.addEventListener('DOMContentLoaded', function() {
             // Package card hover effects
             const cards = document.querySelectorAll('.package-card');
@@ -1199,7 +1584,64 @@
                     this.style.transform = 'translateY(0)';
                 });
             }
+
+            // Online/Offline events
+            window.addEventListener('online', () => {
+                console.log('✅ You are online');
+            });
+
+            window.addEventListener('offline', () => {
+                console.log('⚠️ You are offline');
+            });
+            
+            // Update payment buttons for offline detection
+            setTimeout(() => {
+                const paymentButtons = document.querySelectorAll('.select-btn');
+                paymentButtons.forEach(button => {
+                    const originalOnClick = button.getAttribute('onclick');
+                    if (originalOnClick && originalOnClick.includes('initiateMpesaPayment')) {
+                        const match = originalOnClick.match(/initiateMpesaPayment\((\d+),\s*'([^']+)'\)/);
+                        if (match) {
+                            const amount = match[1];
+                            const packageName = match[2];
+                            button.removeAttribute('onclick');
+                            button.addEventListener('click', (event) => {
+                                if (!navigator.onLine) {
+                                    showOfflineMessage();
+                                } else {
+                                    initiateMpesaPayment(amount, packageName);
+                                }
+                            });
+                        }
+                    }
+                });
+            }, 1000);
         });
     </script>
+    # Add to views.py
+def test_minimal_pwa(request):
+    """Minimal PWA test page"""
+    html = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Minimal PWA Test</title>
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#0a0e17">
+    </head>
+    <body>
+        <h1>Minimal PWA Test</h1>
+        <p>This should trigger PWA detection.</p>
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/serviceworker.js');
+            }
+        </script>
+    </body>
+    </html>
+    '''
+    return HttpResponse(html)
 </body>
 </html>

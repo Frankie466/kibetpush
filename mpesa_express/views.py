@@ -4,23 +4,171 @@ import base64
 import re
 import json
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
+from django.contrib.auth.decorators import login_required
+import os
+from django.conf import settings
 from .forms import PaymentForm
 
-def home(request):
-    return render(request, 'mpesa_express/index.html')
+# PWA Manifest data
+PWA_MANIFEST = {
+    "name": "Starlink Kenya",
+    "short_name": "Starlink",
+    "description": "High-Speed Satellite Internet Payments - Powered by SpaceX",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0e17",
+    "theme_color": "#3ecf8e",
+    "orientation": "portrait",
+    "scope": "/",
+    "categories": ["business", "finance", "utilities"],
+    "icons": [
+        {
+            "src": "/static/icons/icon-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icons/icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icons/icon-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icons/icon-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icons/icon-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icons/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
 
-# M-Pesa API Credentials
+# ==================== PWA Views ====================
+@require_GET
+def manifest_view(request):
+    """Serve PWA manifest.json"""
+    return JsonResponse(PWA_MANIFEST)
+
+@require_GET
+def service_worker(request):
+    """Serve service worker"""
+    sw_path = os.path.join(settings.BASE_DIR, 'static/js/serviceworker.js')
+    
+    try:
+        with open(sw_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except FileNotFoundError:
+        # Default service worker content
+        content = """
+        const CACHE_NAME = 'starlink-cache-v1.0';
+        const OFFLINE_URL = '/offline/';
+        
+        self.addEventListener('install', event => {
+            event.waitUntil(
+                caches.open(CACHE_NAME)
+                    .then(cache => cache.addAll([
+                        '/',
+                        OFFLINE_URL,
+                        '/static/icons/icon-192x192.png'
+                    ]))
+            );
+        });
+        
+        self.addEventListener('fetch', event => {
+            if (event.request.mode === 'navigate') {
+                event.respondWith(
+                    fetch(event.request)
+                        .catch(() => caches.match(OFFLINE_URL))
+                );
+                return;
+            }
+            event.respondWith(
+                caches.match(event.request)
+                    .then(response => response || fetch(event.request))
+            );
+        });
+        """
+    
+    response = HttpResponse(content, content_type='application/javascript')
+    response['Service-Worker-Allowed'] = '/'
+    return response
+
+def offline_view(request):
+    """Offline page"""
+    return render(request, 'mpesa_express/offline.html')
+
+# ==================== Main Views ====================
+def home(request):
+    """Home page with PWA context"""
+    context = {
+        'pwa_enabled': True,
+        'app_name': 'Starlink Kenya',
+        'theme_color': '#3ecf8e',
+        'background_color': '#0a0e17',
+    }
+    return render(request, 'mpesa_express/index.html', context)
+
+def pending_payment(request):
+    """Pending payment page with PWA support"""
+    phone_number = request.session.get("phone_number", "")
+    amount = request.session.get("amount", 0)
+    package_name = request.session.get("package_name", "")
+    checkout_id = request.session.get("checkout_request_id", "")
+    
+    context = {
+        "phone_number": phone_number,
+        "amount": amount,
+        "package_name": package_name,
+        "checkout_id": checkout_id,
+        'pwa_enabled': True,
+    }
+    
+    return render(request, "mpesa_express/pending.html", context)
+
+# ==================== M-Pesa Configuration ====================
 MPESA_SHORTCODE = "5515540"
 MPESA_PASSKEY = "9d1c2d098353f5790d13f2faca56ebc8ff4c98e5970f307908e19f04e38ce54c"
 CONSUMER_KEY = "0VxpuiMStrKodudK2das68bxDGW7GduDHaAuLYJarUn0VJ8d"
 CONSUMER_SECRET = "ji9gGA0u4aGH66wsqJaBEJ2rVn8wWNNfcUVthP65frDwMSkKSjIvhvAcdx0wU3p6"
-MPESA_BASE_URL = "https://api.safaricom.co.ke"  # Live URL
+MPESA_BASE_URL = "https://api.safaricom.co.ke"
 CALLBACK_URL = "https://starrlnk.shop/mpesa/callback/"
 
-# Generate M-Pesa Access Token
+# ==================== M-Pesa Functions ====================
 def generate_access_token():
+    """Generate M-Pesa access token"""
     try:
         credentials = f"{CONSUMER_KEY}:{CONSUMER_SECRET}"
         encoded_credentials = base64.b64encode(credentials.encode()).decode()
@@ -45,8 +193,20 @@ def generate_access_token():
         print(f"❌ Failed to get access token: {str(e)}")
         raise Exception(f"Failed to connect to M-Pesa: {str(e)}")
 
-# Initiate STK Push
+def format_phone_number(phone):
+    """Format phone number for M-Pesa"""
+    phone = phone.replace("+", "").replace(" ", "").replace("-", "")
+    if re.match(r"^254\d{9}$", phone):
+        return phone
+    elif phone.startswith("0") and len(phone) == 10:
+        return "254" + phone[1:]
+    elif len(phone) == 9 and phone.startswith("7"):
+        return "254" + phone
+    else:
+        raise ValueError(f"Invalid phone number format: {phone}. Use format: 0712345678 or 254712345678")
+
 def initiate_push(phone, amount):
+    """Initiate STK push"""
     try:
         print(f"🔑 Generating access token...")
         token = generate_access_token()
@@ -74,7 +234,6 @@ def initiate_push(phone, amount):
         }
 
         print(f"📤 Sending STK push to {phone} for Ksh {amount}")
-        print(f"📦 Request body: {json.dumps(request_body, indent=2)}")
 
         response = requests.post(
             f"{MPESA_BASE_URL}/mpesa/stkpush/v1/processrequest",
@@ -84,8 +243,7 @@ def initiate_push(phone, amount):
         )
 
         print(f"📥 Response Status: {response.status_code}")
-        print(f"📥 Response Text: {response.text}")
-
+        
         if response.status_code != 200:
             print(f"❌ HTTP Error: {response.status_code}")
             return {
@@ -94,9 +252,6 @@ def initiate_push(phone, amount):
             }
 
         response_data = response.json()
-        
-        # Log full response
-        print(f"📊 Full Response Data: {json.dumps(response_data, indent=2)}")
         
         # Check for specific error fields
         if "errorCode" in response_data or "errorMessage" in response_data:
@@ -129,21 +284,10 @@ def initiate_push(phone, amount):
         print(f"❌ Unexpected error: {e}")
         return {"errorMessage": "Unexpected error occurred.", "ResponseCode": "1"}
 
-# Format Phone Number
-def format_phone_number(phone):
-    phone = phone.replace("+", "").replace(" ", "").replace("-", "")
-    if re.match(r"^254\d{9}$", phone):
-        return phone
-    elif phone.startswith("0") and len(phone) == 10:
-        return "254" + phone[1:]
-    elif len(phone) == 9 and phone.startswith("7"):
-        return "254" + phone
-    else:
-        raise ValueError(f"Invalid phone number format: {phone}. Use format: 0712345678 or 254712345678")
-
-# Django View for AJAX STK Push Requests
+# ==================== M-Pesa API Views ====================
 @csrf_exempt
 def mpesa_stk_push(request):
+    """Handle STK push requests"""
     if request.method == "POST":
         try:
             print(f"📨 Received STK push request")
@@ -210,25 +354,9 @@ def mpesa_stk_push(request):
     print(f"❌ Invalid request method: {request.method}")
     return JsonResponse({"status": "error", "message": "Invalid request method."})
 
-def pending_payment(request):
-    phone_number = request.session.get("phone_number", "")
-    amount = request.session.get("amount", 0)
-    package_name = request.session.get("package_name", "")
-    checkout_id = request.session.get("checkout_request_id", "")
-    
-    context = {
-        "phone_number": phone_number,
-        "amount": amount,
-        "package_name": package_name,
-        "checkout_id": checkout_id,
-    }
-    
-    print(f"📄 Rendering pending page with context: {context}")
-    return render(request, "mpesa_express/pending.html", context)
-
-# M-Pesa Callback Handler
 @csrf_exempt
 def mpesa_callback(request):
+    """Handle M-Pesa callback"""
     if request.method == "POST":
         try:
             # Log the incoming data for debugging
@@ -240,7 +368,7 @@ def mpesa_callback(request):
 
             # Extract relevant information
             callback = data.get('Body', {}).get('stkCallback', {})
-            result_code = callback.get('ResultCode', 1)  # Default to error if missing
+            result_code = callback.get('ResultCode', 1)
             checkout_request_id = callback.get('CheckoutRequestID', '')
             merchant_request_id = callback.get('MerchantRequestID', '')
             
@@ -260,12 +388,6 @@ def mpesa_callback(request):
                     transaction_details[name] = value
                     print(f"   {name}: {value}")
                 
-                # Here you should:
-                # 1. Update your database
-                # 2. Mark payment as complete
-                # 3. Send confirmation email/SMS
-                # 4. Trigger any post-payment actions
-                
                 print(f"💰 Transaction completed successfully!")
                 
             else:
@@ -277,10 +399,10 @@ def mpesa_callback(request):
                 print(f"   ResultCode: {result_code}")
                 print(f"   ResultDesc: {result_desc}")
 
-            # ⭐⭐⭐ CRITICAL: Safaricom expects EXACTLY this response ⭐⭐⭐
+            # Return response to M-Pesa
             response = JsonResponse({
-                "ResultCode": 0,      # ← Must be 0 to acknowledge receipt
-                "ResultDesc": "Success"  # ← Must be "Success"
+                "ResultCode": 0,
+                "ResultDesc": "Success"
             })
             print(f"📤 Sending callback response: {response.content}")
             return response
@@ -288,7 +410,6 @@ def mpesa_callback(request):
         except json.JSONDecodeError as e:
             print(f"❌ JSON decode error: {e}")
             print(f"❌ Raw body that caused error: {request.body}")
-            # Still return success to Safaricom to avoid retries
             return JsonResponse({
                 "ResultCode": 0,
                 "ResultDesc": "Success"
@@ -298,14 +419,12 @@ def mpesa_callback(request):
             print(f"❌ Error processing callback: {e}")
             import traceback
             traceback.print_exc()
-            # Still return success to Safaricom
             return JsonResponse({
                 "ResultCode": 0,
                 "ResultDesc": "Success"
             })
     
     print(f"⚠ Non-POST request to callback: {request.method}")
-    # If not POST, still return proper format
     return JsonResponse({
         "ResultCode": 0,
         "ResultDesc": "Success"
