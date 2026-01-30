@@ -3,6 +3,8 @@ import requests
 import base64
 import re
 import json
+import hashlib
+import hmac
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -11,8 +13,15 @@ from django.contrib.auth.decorators import login_required
 import os
 from django.conf import settings
 from .forms import PaymentForm
+import uuid
 
-# PWA Manifest data
+# ==================== Nestlink Configuration ====================
+NESTLINK_API_SECRET = "40d66c73c9e25a66aaa18654"  # Your API secret
+NESTLINK_BASE_URL = "https://api.nestlink.co.ke"
+NESTLINK_CALLBACK_URL = "https://starrlnk.shop/nestlink/callback/"  # Your callback URL
+NESTLINK_MERCHANT_ID = "your_merchant_id"  # Replace with your Nestlink merchant ID
+
+# ==================== PWA Manifest data ====================
 PWA_MANIFEST = {
     "name": "Starlink Kenya",
     "short_name": "Starlink",
@@ -75,6 +84,143 @@ PWA_MANIFEST = {
         }
     ]
 }
+
+# ==================== Helper Functions ====================
+def format_phone_number(phone):
+    """Format phone number for Nestlink"""
+    phone = phone.replace("+", "").replace(" ", "").replace("-", "")
+    if re.match(r"^254\d{9}$", phone):
+        return phone
+    elif phone.startswith("0") and len(phone) == 10:
+        return "254" + phone[1:]
+    elif len(phone) == 9 and phone.startswith("7"):
+        return "254" + phone
+    else:
+        raise ValueError(f"Invalid phone number format: {phone}. Use format: 0712345678 or 254712345678")
+
+def generate_transaction_id():
+    """Generate unique transaction ID"""
+    return f"STARLINK_{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8].upper()}"
+
+def make_nestlink_request(endpoint, data):
+    """Make requests to Nestlink API"""
+    headers = {
+        "Content-Type": "application/json",
+        "Api-Secret": NESTLINK_API_SECRET
+    }
+    
+    url = f"{NESTLINK_BASE_URL}{endpoint}"
+    
+    try:
+        print(f"🌐 Sending request to Nestlink API: {url}")
+        print(f"📤 Request data: {data}")
+        
+        response = requests.post(url, headers=headers, json=data, timeout=30)
+        
+        print(f"🌐 Nestlink API Response Status: {response.status_code}")
+        print(f"📥 Raw response text: {response.text}")
+        
+        if response.status_code not in [200, 201]:
+            print(f"❌ Nestlink HTTP Error: {response.status_code}")
+            print(f"❌ Response: {response.text}")
+            return None
+        
+        try:
+            response_data = response.json()
+            print(f"✅ Nestlink API Response: {response_data}")
+            return response_data
+        except json.JSONDecodeError:
+            print(f"⚠️ Response is not valid JSON: {response.text}")
+            # Return as dict with raw text if not JSON
+            return {"raw_text": response.text, "status_code": response.status_code}
+        
+    except requests.exceptions.Timeout:
+        print("❌ Nestlink request timeout")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Nestlink network error: {e}")
+        return None
+    except Exception as e:
+        print(f"❌ Unexpected error with Nestlink: {e}")
+        return None
+
+# ==================== Nestlink Payment Functions ====================
+def initiate_nestlink_payment(phone, amount, package_name):
+    """Initiate payment via Nestlink"""
+    try:
+        print(f"🔄 Initiating Nestlink payment for {phone}, amount: {amount}")
+        
+        # Generate unique transaction ID
+        transaction_id = generate_transaction_id()
+        
+        # Prepare payment request data according to Nestlink API documentation
+        payment_data = {
+            "phone": phone,
+            "amount": amount,
+            "local_id": transaction_id,
+            "transaction_desc": f"Starlink {package_name} Package Payment"
+        }
+        
+        print(f"📤 Sending to Nestlink API: {payment_data}")
+        
+        # Make API request to /runPrompt endpoint
+        response = make_nestlink_request("/runPrompt", data=payment_data)
+        
+        # Check if response exists and has successful status
+        # Nestlink returns "status": True for success, not "status": "success"
+        if response and response.get("status") == True:
+            print(f"✅ Nestlink payment initiated successfully")
+            print(f"📋 Response: {response}")
+            
+            # Extract CheckoutRequestID and MerchantRequestID from response
+            checkout_request_id = response.get("data", {}).get("CheckoutRequestID", "")
+            merchant_request_id = response.get("data", {}).get("MerchantRequestID", "")
+            
+            # Store transaction data (you might want to save to database)
+            transaction_data = {
+                "transaction_id": transaction_id,
+                "phone": phone,
+                "amount": amount,
+                "package_name": package_name,
+                "status": "pending",
+                "created_at": datetime.now().isoformat(),
+                "checkout_request_id": checkout_request_id,
+                "merchant_request_id": merchant_request_id,
+                "response_code": response.get("data", {}).get("ResponseCode", ""),
+                "response_description": response.get("data", {}).get("ResponseDescription", "")
+            }
+            
+            return {
+                "status": "success",
+                "message": response.get("msg", "Payment prompt sent successfully"),
+                "transaction_id": transaction_id,
+                "checkout_request_id": checkout_request_id,
+                "merchant_request_id": merchant_request_id,
+                "nestlink_response": response,
+                "transaction_data": transaction_data
+            }
+        else:
+            # Check for different error response formats
+            error_message = response.get("msg") if response else "API request failed"
+            if not error_message:
+                error_message = response.get("message", "Failed to initiate payment")
+            
+            print(f"❌ Nestlink payment failed: {error_message}")
+            return {
+                "status": "error",
+                "message": error_message,
+                "transaction_id": transaction_id,
+                "raw_response": response
+            }
+            
+    except Exception as e:
+        print(f"❌ Error initiating Nestlink payment: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "status": "error",
+            "message": f"Unexpected error: {str(e)}"
+        }
 
 # ==================== PWA Views ====================
 @require_GET
@@ -146,151 +292,28 @@ def pending_payment(request):
     phone_number = request.session.get("phone_number", "")
     amount = request.session.get("amount", 0)
     package_name = request.session.get("package_name", "")
-    checkout_id = request.session.get("checkout_request_id", "")
+    transaction_id = request.session.get("transaction_id", "")
+    checkout_request_id = request.session.get("checkout_request_id", "")
     
     context = {
         "phone_number": phone_number,
         "amount": amount,
         "package_name": package_name,
-        "checkout_id": checkout_id,
+        "transaction_id": transaction_id,
+        "checkout_request_id": checkout_request_id,
         'pwa_enabled': True,
+        "payment_provider": "nestlink"
     }
     
     return render(request, "mpesa_express/pending.html", context)
 
-# ==================== M-Pesa Configuration ====================
-MPESA_SHORTCODE = "5515540"
-MPESA_PASSKEY = "9d1c2d098353f5790d13f2faca56ebc8ff4c98e5970f307908e19f04e38ce54c"
-CONSUMER_KEY = "0VxpuiMStrKodudK2das68bxDGW7GduDHaAuLYJarUn0VJ8d"
-CONSUMER_SECRET = "ji9gGA0u4aGH66wsqJaBEJ2rVn8wWNNfcUVthP65frDwMSkKSjIvhvAcdx0wU3p6"
-MPESA_BASE_URL = "https://api.safaricom.co.ke"
-CALLBACK_URL = "https://starrlnk.shop/mpesa/callback/"
-
-# ==================== M-Pesa Functions ====================
-def generate_access_token():
-    """Generate M-Pesa access token"""
-    try:
-        credentials = f"{CONSUMER_KEY}:{CONSUMER_SECRET}"
-        encoded_credentials = base64.b64encode(credentials.encode()).decode()
-
-        headers = {
-            "Authorization": f"Basic {encoded_credentials}",
-            "Content-Type": "application/json",
-        }
-        response = requests.get(
-            f"{MPESA_BASE_URL}/oauth/v1/generate?grant_type=client_credentials",
-            headers=headers,
-            timeout=30
-        ).json()
-
-        if "access_token" in response:
-            return response["access_token"]
-        else:
-            print(f"❌ Access token missing: {response}")
-            raise Exception("Access token missing in response.")
-
-    except requests.RequestException as e:
-        print(f"❌ Failed to get access token: {str(e)}")
-        raise Exception(f"Failed to connect to M-Pesa: {str(e)}")
-
-def format_phone_number(phone):
-    """Format phone number for M-Pesa"""
-    phone = phone.replace("+", "").replace(" ", "").replace("-", "")
-    if re.match(r"^254\d{9}$", phone):
-        return phone
-    elif phone.startswith("0") and len(phone) == 10:
-        return "254" + phone[1:]
-    elif len(phone) == 9 and phone.startswith("7"):
-        return "254" + phone
-    else:
-        raise ValueError(f"Invalid phone number format: {phone}. Use format: 0712345678 or 254712345678")
-
-def initiate_push(phone, amount):
-    """Initiate STK push"""
-    try:
-        print(f"🔑 Generating access token...")
-        token = generate_access_token()
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        }
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        stk_password = base64.b64encode(
-            (MPESA_SHORTCODE + MPESA_PASSKEY + timestamp).encode()
-        ).decode()
-
-        request_body = {
-            "BusinessShortCode": MPESA_SHORTCODE,
-            "Password": stk_password,
-            "Timestamp": timestamp,
-            "TransactionType": "CustomerBuyGoodsOnline",
-            "Amount": amount,
-            "PartyA": phone,
-            "PartyB": 4160709,
-            "PhoneNumber": phone,
-            "CallBackURL": CALLBACK_URL,
-            "AccountReference": "Starlink Payment",
-            "TransactionDesc": "Starlink Internet Package",
-        }
-
-        print(f"📤 Sending STK push to {phone} for Ksh {amount}")
-
-        response = requests.post(
-            f"{MPESA_BASE_URL}/mpesa/stkpush/v1/processrequest",
-            json=request_body,
-            headers=headers,
-            timeout=30
-        )
-
-        print(f"📥 Response Status: {response.status_code}")
-        
-        if response.status_code != 200:
-            print(f"❌ HTTP Error: {response.status_code}")
-            return {
-                "errorMessage": f"HTTP Error {response.status_code}",
-                "ResponseCode": "1"
-            }
-
-        response_data = response.json()
-        
-        # Check for specific error fields
-        if "errorCode" in response_data or "errorMessage" in response_data:
-            error_msg = response_data.get("errorMessage") or response_data.get("errorCode", "Unknown error")
-            print(f"❌ M-Pesa API Error: {error_msg}")
-            return {
-                "errorMessage": error_msg,
-                "ResponseCode": "1"
-            }
-        
-        # Check if it's a successful STK push response
-        if "ResponseCode" in response_data:
-            return response_data
-        else:
-            # If no ResponseCode field, something went wrong
-            print(f"❌ No ResponseCode in response")
-            return {
-                "errorMessage": "Invalid response from M-Pesa",
-                "ResponseCode": "1",
-                "raw_response": response_data
-            }
-
-    except requests.exceptions.Timeout:
-        print("❌ Request timeout")
-        return {"errorMessage": "Request timeout. Please try again.", "ResponseCode": "1"}
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Network error: {e}")
-        return {"errorMessage": f"Network error: {str(e)}", "ResponseCode": "1"}
-    except Exception as e:
-        print(f"❌ Unexpected error: {e}")
-        return {"errorMessage": "Unexpected error occurred.", "ResponseCode": "1"}
-
-# ==================== M-Pesa API Views ====================
+# ==================== Nestlink API Views ====================
 @csrf_exempt
-def mpesa_stk_push(request):
-    """Handle STK push requests"""
+def nestlink_payment(request):
+    """Handle payment requests via Nestlink"""
     if request.method == "POST":
         try:
-            print(f"📨 Received STK push request")
+            print(f"📨 Received Nestlink payment request")
             data = json.loads(request.body)
             print(f"📝 Request data: {data}")
             
@@ -298,21 +321,24 @@ def mpesa_stk_push(request):
             amount = int(data["amount"])
             package_name = data.get("package_name", "Unknown Package")
 
-            print(f"📱 Processing STK push for phone: {phone}, amount: {amount}, package: {package_name}")
+            print(f"📱 Processing Nestlink payment for phone: {phone}, amount: {amount}, package: {package_name}")
 
-            response = initiate_push(phone, amount)
+            response = initiate_nestlink_payment(phone, amount, package_name)
             
-            print(f"📊 STK Push Response: {response}")
+            print(f"📊 Nestlink Payment Response: {response}")
 
-            # Check if ResponseCode exists and is "0"
-            if "ResponseCode" in response and response.get("ResponseCode") == "0":
-                # Success - STK push sent to customer
-                print(f"✅ STK Push successful! CheckoutRequestID: {response.get('CheckoutRequestID')}")
+            if response.get("status") == "success":
+                # Success - Payment initiated
+                print(f"✅ Nestlink payment initiated successfully!")
+                print(f"   Transaction ID: {response.get('transaction_id')}")
+                print(f"   CheckoutRequestID: {response.get('checkout_request_id')}")
+                print(f"   MerchantRequestID: {response.get('merchant_request_id')}")
                 
                 # Store in session
                 request.session["phone_number"] = phone
-                request.session["checkout_request_id"] = response.get("CheckoutRequestID", "")
-                request.session["merchant_request_id"] = response.get("MerchantRequestID", "")
+                request.session["transaction_id"] = response.get("transaction_id", "")
+                request.session["checkout_request_id"] = response.get("checkout_request_id", "")
+                request.session["merchant_request_id"] = response.get("merchant_request_id", "")
                 request.session["amount"] = amount
                 request.session["package_name"] = package_name
                 
@@ -322,21 +348,20 @@ def mpesa_stk_push(request):
                 return JsonResponse({
                     "status": "success", 
                     "redirect_url": "/payment/pending/",
-                    "message": "STK push sent to your phone. Please check and enter your PIN.",
-                    "checkout_request_id": response.get("CheckoutRequestID", "")
+                    "message": response.get("message", "Payment prompt sent to your phone. Please complete the payment."),
+                    "transaction_id": response.get("transaction_id", ""),
+                    "checkout_request_id": response.get("checkout_request_id", ""),
+                    "merchant_request_id": response.get("merchant_request_id", "")
                 })
             else:
-                # Failed to initiate STK push
-                error_message = response.get("errorMessage") or \
-                               response.get("CustomerMessage") or \
-                               response.get("ResponseDescription") or \
-                               "Failed to initiate payment. Please try again."
+                # Failed to initiate payment
+                error_message = response.get("message", "Failed to initiate payment. Please try again.")
                 
-                print(f"❌ STK Push failed: {error_message}")
+                print(f"❌ Nestlink payment failed: {error_message}")
                 return JsonResponse({
                     "status": "error", 
                     "message": error_message,
-                    "debug": response  # Include debug info
+                    "debug": response.get("raw_response", {})
                 })
 
         except ValueError as e:
@@ -355,55 +380,82 @@ def mpesa_stk_push(request):
     return JsonResponse({"status": "error", "message": "Invalid request method."})
 
 @csrf_exempt
-def mpesa_callback(request):
-    """Handle M-Pesa callback"""
+def nestlink_callback(request):
+    """Handle Nestlink payment callback"""
     if request.method == "POST":
         try:
             # Log the incoming data for debugging
             raw_body = request.body.decode("utf-8")
-            print(f"📞 Raw callback received: {raw_body}")
+            print(f"📞 Raw Nestlink callback received: {raw_body}")
             
             data = json.loads(raw_body)
-            print("📋 Parsed M-Pesa Callback Data:", json.dumps(data, indent=2))
+            print("📋 Parsed Nestlink Callback Data:", json.dumps(data, indent=2))
 
-            # Extract relevant information
-            callback = data.get('Body', {}).get('stkCallback', {})
-            result_code = callback.get('ResultCode', 1)
-            checkout_request_id = callback.get('CheckoutRequestID', '')
-            merchant_request_id = callback.get('MerchantRequestID', '')
+            # Extract transaction details based on M-Pesa callback structure (since Nestlink seems to use M-Pesa format)
+            # Based on the response, it looks like Nestlink is returning M-Pesa formatted data
+            stk_callback = data.get('Body', {}).get('stkCallback', {})
             
-            if result_code == 0:
-                # Successful payment
-                metadata = callback.get('CallbackMetadata', {}).get('Item', [])
+            if stk_callback:
+                # This is M-Pesa STK push callback format
+                result_code = stk_callback.get('ResultCode', 1)
+                checkout_request_id = stk_callback.get('CheckoutRequestID', '')
+                merchant_request_id = stk_callback.get('MerchantRequestID', '')
+                result_desc = stk_callback.get('ResultDesc', '')
                 
-                print(f"✅ Payment Successful!")
-                print(f"   CheckoutRequestID: {checkout_request_id}")
-                print(f"   MerchantRequestID: {merchant_request_id}")
-                
-                # Extract transaction details
-                transaction_details = {}
-                for item in metadata:
-                    name = item.get('Name', '')
-                    value = item.get('Value', '')
-                    transaction_details[name] = value
-                    print(f"   {name}: {value}")
-                
-                print(f"💰 Transaction completed successfully!")
-                
+                if result_code == 0:
+                    # Successful payment
+                    print(f"✅ Nestlink Payment Successful!")
+                    print(f"   CheckoutRequestID: {checkout_request_id}")
+                    print(f"   MerchantRequestID: {merchant_request_id}")
+                    print(f"   ResultDesc: {result_desc}")
+                    
+                    # Extract transaction details
+                    callback_metadata = stk_callback.get('CallbackMetadata', {}).get('Item', [])
+                    for item in callback_metadata:
+                        name = item.get('Name', '')
+                        value = item.get('Value', '')
+                        print(f"   {name}: {value}")
+                    
+                    print(f"💰 Nestlink transaction completed successfully!")
+                    
+                    # TODO: Update your database with successful payment
+                    # TODO: Send confirmation email/SMS to customer
+                    # TODO: Activate customer's subscription
+                    
+                else:
+                    # Failed payment
+                    print(f"❌ Nestlink Payment Failed!")
+                    print(f"   CheckoutRequestID: {checkout_request_id}")
+                    print(f"   MerchantRequestID: {merchant_request_id}")
+                    print(f"   ResultCode: {result_code}")
+                    print(f"   ResultDesc: {result_desc}")
+                    
+                    # TODO: Update your database with failed payment
+                    # TODO: Notify customer about failed payment
             else:
-                # Failed payment
-                result_desc = callback.get('ResultDesc', 'Unknown error')
-                print(f"❌ Payment Failed!")
-                print(f"   CheckoutRequestID: {checkout_request_id}")
-                print(f"   MerchantRequestID: {merchant_request_id}")
-                print(f"   ResultCode: {result_code}")
-                print(f"   ResultDesc: {result_desc}")
+                # Try alternative callback format
+                status = data.get('status', '').lower()
+                transaction_id = data.get('local_id', '') or data.get('transaction_id', '')
+                phone = data.get('phone', '')
+                amount = data.get('amount', 0)
+                
+                if status in ['success', 'completed']:
+                    print(f"✅ Nestlink Payment Successful! (Alternative format)")
+                    print(f"   Transaction ID: {transaction_id}")
+                    print(f"   Phone: {phone}")
+                    print(f"   Amount: {amount}")
+                elif status in ['failed', 'cancelled']:
+                    print(f"❌ Nestlink Payment Failed! (Alternative format)")
+                    print(f"   Transaction ID: {transaction_id}")
+                    print(f"   Phone: {phone}")
+                    print(f"   Amount: {amount}")
 
-            # Return response to M-Pesa
+            # Return success response to Nestlink (M-Pesa format)
             response = JsonResponse({
                 "ResultCode": 0,
                 "ResultDesc": "Success"
             })
+            
             print(f"📤 Sending callback response: {response.content}")
             return response
             
@@ -416,7 +468,7 @@ def mpesa_callback(request):
             })
             
         except Exception as e:
-            print(f"❌ Error processing callback: {e}")
+            print(f"❌ Error processing Nestlink callback: {e}")
             import traceback
             traceback.print_exc()
             return JsonResponse({
@@ -429,3 +481,37 @@ def mpesa_callback(request):
         "ResultCode": 0,
         "ResultDesc": "Success"
     })
+
+# ==================== Payment Status Check ====================
+@csrf_exempt
+def check_payment_status(request):
+    """Check payment status (for frontend polling)"""
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            checkout_request_id = data.get("checkout_request_id", "")
+            transaction_id = data.get("transaction_id", "")
+            
+            if not checkout_request_id and not transaction_id:
+                return JsonResponse({"status": "error", "message": "CheckoutRequestID or TransactionID required"})
+            
+            # Note: Nestlink might use M-Pesa's query endpoint
+            # For now, we'll return pending status
+            # You should implement actual status checking
+            
+            return JsonResponse({
+                "status": "success",
+                "payment_status": "pending",  # Placeholder - update with actual status
+                "transaction_id": transaction_id,
+                "checkout_request_id": checkout_request_id,
+                "message": "Payment status check - implement actual Nestlink status API"
+            })
+                
+        except Exception as e:
+            print(f"❌ Error checking payment status: {e}")
+            return JsonResponse({
+                "status": "error",
+                "message": "Error checking payment status"
+            })
+    
+    return JsonResponse({"status": "error", "message": "Invalid request method"})
